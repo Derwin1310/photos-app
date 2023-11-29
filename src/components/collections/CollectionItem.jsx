@@ -3,6 +3,7 @@ import { Image, StyleSheet, View } from 'react-native'
 import { Link } from '@react-navigation/native'
 import { store } from '../../context/store'
 import { StyledText } from '../../theme'
+import noImageFound from "../../../assets/noImage.png"
 
 export const CollectionItem = ({ item }) => {
   const { effects: { setListTitle } } = useContext(store)
@@ -16,7 +17,7 @@ export const CollectionItem = ({ item }) => {
     >
       <View>
         <Image
-          source={{ uri: `https://maps-app1.s3.amazonaws.com/collections/${item}.jpg` }}
+          source={noImageFound}
           style={styles.imgCollection}
           resizeMode="stretch"
         />

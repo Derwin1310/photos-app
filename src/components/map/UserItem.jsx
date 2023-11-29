@@ -2,6 +2,7 @@ import { Image, ImageBackground, StyleSheet, View } from 'react-native'
 import { Marker } from 'react-native-maps'
 import { users } from '../../data/usersData'
 import ellipse from "../../../assets/ellipse.png"
+import noImage from "../../../assets/noProfileImage.png"
 import { StyledText, colors } from '../../theme'
 
 export const UserItem = () => (
@@ -29,7 +30,7 @@ export const UserItem = () => (
         style={styles.ellipse}
       >
         <Image
-          source={{ uri: `https://maps-app1.s3.amazonaws.com/profile-pic/bogota/${username}.jpeg` }}
+          source={noImage}
           resizeMode="stretch"
           style={styles.profileImg}
         />
