@@ -1,6 +1,6 @@
 # PhotoSearch
 
-PhotoSearch is an Expo SDK 56 app for discovering photos, browsing themed collections, and saving camera captures locally.
+PhotoSearch is an Expo SDK 54 app for discovering photos, browsing themed collections, and saving camera captures locally.
 
 ## Stack
 
@@ -54,10 +54,17 @@ EXPO_PUBLIC_UNSPLASH_ACCESS_KEY=your_unsplash_access_key_here
 ```bash
 pnpm install
 pnpm start
+pnpm exec expo prebuild
+pnpm ios
+pnpm android
 pnpm typecheck
 pnpm lint
 pnpm check
 ```
+
+This project uses Expo Continuous Native Generation (CNG): `app.json` is the
+source of truth, and `ios/` and `android/` are generated locally when a native
+build is needed.
 
 ## TestFlight
 

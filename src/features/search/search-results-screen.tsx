@@ -1,8 +1,9 @@
 import { FlashList } from "@shopify/flash-list";
 import { useDeferredValue } from "react";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { Pressable, View } from "react-native";
 import { Image } from "expo-image";
+import { ChevronLeft } from "lucide-react-native";
 import { useSearchPhotosQuery } from "@/features/search/use-search-photos-query";
 import { AppText } from "@/lib/components/app-text";
 import { EmptyState } from "@/lib/components/empty-state";
@@ -10,6 +11,22 @@ import { ErrorState } from "@/lib/components/error-state";
 import { LoadingState } from "@/lib/components/loading-state";
 import { formatCompactNumber } from "@/lib/utils/format";
 import { getErrorMessage } from "@/lib/utils/errors";
+
+// ponytail: native back is unreliable after repeated collection routes; dismissTo always returns to Feed.
+function BackToFeedButton() {
+  return (
+    <Link asChild dismissTo href="/feed">
+      <Pressable
+        accessibilityLabel="Back to feed"
+        accessibilityRole="button"
+        className="items-center justify-center rounded-full p-2"
+        hitSlop={10}
+      >
+        <ChevronLeft color="#3a3636" size={26} strokeWidth={2.4} />
+      </Pressable>
+    </Link>
+  );
+}
 
 export default function SearchResultsScreen() {
   const params = useLocalSearchParams<{ query?: string }>();
@@ -32,7 +49,13 @@ export default function SearchResultsScreen() {
 
   return (
     <View className="flex-1 bg-canvas">
-      <Stack.Screen options={{ title: normalizedTitle }} />
+      <Stack.Screen
+        options={{
+          title: normalizedTitle,
+          headerBackVisible: false,
+          headerLeft: () => <BackToFeedButton />,
+        }}
+      />
 
       <FlashList
         ListHeaderComponent={
@@ -49,7 +72,7 @@ export default function SearchResultsScreen() {
         }
         className="flex-1"
         contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={{ gap: 12, paddingBottom: 40, paddingHorizontal: 20 }}
+        contentContainerClassName="px-5 pb-10"
         data={photos}
         keyExtractor={(item) => item.id}
         ListEmptyComponent={
@@ -84,17 +107,15 @@ export default function SearchResultsScreen() {
         onEndReachedThreshold={0.65}
         renderItem={({ item }) => (
           <View className="flex-1 px-1.5 pb-3">
-            <Pressable
-              accessibilityLabel={`Photo by ${item.photographer.name}`}
-              className="overflow-hidden rounded-[22px] bg-surface"
-            >
+            <View className="overflow-hidden rounded-[22px] bg-surface">
               <Image
                 className="aspect-[3/4] w-full"
                 contentFit="cover"
+                recyclingKey={item.id}
                 source={{ uri: item.thumbUrl }}
                 transition={180}
               />
-            </Pressable>
+            </View>
           </View>
         )}
         showsVerticalScrollIndicator={false}

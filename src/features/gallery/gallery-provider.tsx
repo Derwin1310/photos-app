@@ -13,10 +13,12 @@ import {
   saveGalleryPhotos,
 } from "@/features/gallery/gallery-repository";
 
+type DraftPhoto = { caption: string; uri: string };
+
 type GalleryContextValue = {
   clearDraftPhoto: () => void;
   createDraftPhoto: (uri: string) => void;
-  draftPhoto: { caption: string; uri: string } | null;
+  draftPhoto: DraftPhoto | null;
   error: string | null;
   hydrated: boolean;
   photos: GalleryPhoto[];
@@ -45,10 +47,7 @@ async function commitPhotos(
 }
 
 export function GalleryProvider({ children }: PropsWithChildren) {
-  const [draftPhoto, setDraftPhoto] = useState<{
-    caption: string;
-    uri: string;
-  } | null>(null);
+  const [draftPhoto, setDraftPhoto] = useState<DraftPhoto | null>(null);
   const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -101,22 +100,17 @@ export function GalleryProvider({ children }: PropsWithChildren) {
     });
   };
 
-  const updateDraftCaption = (caption: string) => {
-    startTransition(() => {
-      setDraftPhoto((currentDraft) =>
-        currentDraft
-          ? {
-              ...currentDraft,
-              caption,
-            }
-          : currentDraft,
-      );
-    });
-  };
-
   const clearDraftPhoto = () => {
     startTransition(() => {
       setDraftPhoto(null);
+    });
+  };
+
+  const updateDraftCaption = (caption: string) => {
+    startTransition(() => {
+      setDraftPhoto((currentDraft) =>
+        currentDraft ? { ...currentDraft, caption } : currentDraft,
+      );
     });
   };
 

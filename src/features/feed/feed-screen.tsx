@@ -71,7 +71,7 @@ export default function FeedScreen() {
       }
       className="flex-1 bg-canvas"
       contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 20 }}
+      contentContainerClassName="px-5 pb-10"
       data={photos}
       keyExtractor={(item) => item.id}
       ListEmptyComponent={
@@ -91,7 +91,7 @@ export default function FeedScreen() {
           </View>
         ) : null
       }
-      ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
+      ItemSeparatorComponent={() => <View className="h-5" />}
       onEndReached={() => {
         if (!hasNextPage || isFetchingNextPage) {
           return;

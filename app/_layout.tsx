@@ -14,6 +14,7 @@ import { useFonts as useExpoFonts } from "expo-font";
 import { AppProviders } from "@/providers/app-providers";
 
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
+SplashScreen.setOptions({ duration: 250, fade: true });
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useExpoFonts({
@@ -55,13 +56,20 @@ export default function RootLayout() {
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="search/[query]" options={{ title: "Search" }} />
+        <Stack.Screen
+          name="search/[query]"
+          options={{
+            title: "Search",
+          }}
+        />
         <Stack.Screen
           name="(modals)/edit-photo"
           options={{
             title: "Edit photo",
-            presentation: "formSheet",
-            sheetGrabberVisible: true,
+            presentation: "fullScreenModal",
+            contentStyle: {
+              backgroundColor: "#f6efe8",
+            },
           }}
         />
         <Stack.Screen name="+not-found" options={{ title: "Not found" }} />

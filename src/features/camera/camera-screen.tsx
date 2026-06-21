@@ -13,6 +13,7 @@ import { ErrorState } from "@/lib/components/error-state";
 import { useGallery } from "@/features/gallery/gallery-provider";
 
 export default function CameraScreen() {
+  const [isCapturing, setIsCapturing] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>("back");
   const [screenFocused, setScreenFocused] = useState(true);
@@ -30,18 +31,24 @@ export default function CameraScreen() {
   });
 
   async function capturePhoto() {
-    if (!cameraRef.current) {
+    if (!cameraRef.current || isCapturing) {
       return;
     }
 
-    const photo = await cameraRef.current.takePictureAsync({ quality: 0.85 });
+    setIsCapturing(true);
 
-    if (!photo?.uri) {
-      return;
+    try {
+      const photo = await cameraRef.current.takePictureAsync({ quality: 0.85 });
+
+      if (!photo?.uri) {
+        return;
+      }
+
+      createDraftPhoto(photo.uri);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => undefined);
+    } finally {
+      setIsCapturing(false);
     }
-
-    createDraftPhoto(photo.uri);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => undefined);
   }
 
   function discardPhoto() {
@@ -178,7 +185,9 @@ export default function CameraScreen() {
                 <Pressable
                   accessibilityLabel="Capture photo"
                   accessibilityRole="button"
+                  accessibilityState={{ disabled: isCapturing }}
                   className="items-center justify-center rounded-full border-4 border-white bg-white/20 p-4"
+                  disabled={isCapturing}
                   hitSlop={10}
                   onPress={() => void capturePhoto()}
                 >

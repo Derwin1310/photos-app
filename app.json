@@ -12,9 +12,10 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#ffffff",
-          "image": "./assets/splash.png",
-          "resizeMode": "contain"
+          "backgroundColor": "#f6efe8",
+          "image": "./assets/splash-photojournal.png",
+          "resizeMode": "contain",
+          "imageWidth": 180
         }
       ],
       "expo-font"

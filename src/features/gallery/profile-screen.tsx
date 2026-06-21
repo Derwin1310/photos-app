@@ -11,7 +11,7 @@ import { AppText } from "@/lib/components/app-text";
 import { EmptyState } from "@/lib/components/empty-state";
 import { ErrorState } from "@/lib/components/error-state";
 import type { GalleryPhoto } from "@/lib/types/gallery";
-import { formatCompactNumber } from "@/lib/utils/format";
+import { formatCompactNumber, formatGalleryDate } from "@/lib/utils/format";
 
 const profileStats = [
   { icon: Camera, label: "Photos" },
@@ -128,7 +128,7 @@ export default function ProfileScreen() {
       }
       className="flex-1 bg-canvas"
       contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={{ gap: 16, paddingBottom: 40, paddingHorizontal: 20 }}
+      contentContainerClassName="px-5 pb-10"
       data={photos}
       keyExtractor={(item) => item.id}
       ListEmptyComponent={
@@ -137,6 +137,7 @@ export default function ProfileScreen() {
           title="Your gallery is empty"
         />
       }
+      ItemSeparatorComponent={() => <View className="h-4" />}
       renderItem={({ item }) => (
         <View className="gap-4 rounded-[28px] bg-surface p-4">
           <View className="flex-row gap-4">
@@ -152,7 +153,7 @@ export default function ProfileScreen() {
                   {item.caption || "Untitled memory"}
                 </AppText>
                 <AppText tone="muted" variant="caption">
-                  Updated {new Date(item.updatedAt).toLocaleDateString()}
+                  Updated {formatGalleryDate(item.updatedAt)}
                 </AppText>
               </View>
               <View className="flex-row flex-wrap gap-2">

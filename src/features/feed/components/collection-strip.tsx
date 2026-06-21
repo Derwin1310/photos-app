@@ -18,40 +18,43 @@ export function CollectionStrip() {
       </View>
 
       <ScrollView
-        contentContainerStyle={{ gap: 16, paddingRight: 24 }}
         horizontal
         showsHorizontalScrollIndicator={false}
       >
-        {collectionPreviews.map(({ collection, preview }) => (
-          <Link
-            key={collection}
-            asChild
-            href={{
-              pathname: "/search/[query]",
-              params: { query: collection },
-            }}
-          >
-            <Pressable
-              accessibilityHint={`Browse ${collection} photos`}
-              accessibilityRole="button"
-              className="w-28 gap-2"
+        <View className="flex-row gap-4 pr-6">
+          {collectionPreviews.map(({ collection, preview }) => (
+            <Link
+              key={collection}
+              asChild
+              push
+              href={{
+                pathname: "/search/[query]",
+                params: { query: collection },
+              }}
             >
-              <Image
-                className="h-28 w-28 rounded-[24px] bg-surface"
-                contentFit="cover"
-                source={
-                  preview
-                    ? { uri: preview.thumbUrl || preview.imageUrl }
-                    : images.collectionPlaceholder
-                }
-                transition={180}
-              />
-              <AppText className="capitalize" variant="subheading">
-                {collection}
-              </AppText>
-            </Pressable>
-          </Link>
-        ))}
+              <Pressable
+                accessibilityHint={`Browse ${collection} photos`}
+                accessibilityRole="button"
+                className="w-28 gap-2"
+              >
+                <Image
+                  className="h-28 w-28 rounded-[24px] bg-surface"
+                  contentFit="cover"
+                  recyclingKey={preview?.id ?? collection}
+                  source={
+                    preview
+                      ? { uri: preview.thumbUrl || preview.imageUrl }
+                      : images.collectionPlaceholder
+                  }
+                  transition={180}
+                />
+                <AppText className="capitalize" variant="subheading">
+                  {collection}
+                </AppText>
+              </Pressable>
+            </Link>
+          ))}
+        </View>
       </ScrollView>
     </View>
   );

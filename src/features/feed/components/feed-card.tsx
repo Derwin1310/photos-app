@@ -52,6 +52,7 @@ export function FeedCard({ photo }: FeedCardProps) {
         <Image
           className="h-12 w-12 rounded-full border border-accent/20 bg-canvas"
           contentFit="cover"
+          recyclingKey={`${photo.id}-avatar`}
           source={{ uri: photo.photographer.profileImageUrl }}
           transition={180}
         />
@@ -77,6 +78,7 @@ export function FeedCard({ photo }: FeedCardProps) {
           <Image
             className="aspect-[4/5] w-full"
             contentFit="cover"
+            recyclingKey={`${photo.id}-photo`}
             source={{ uri: photo.imageUrl }}
             transition={220}
           />
