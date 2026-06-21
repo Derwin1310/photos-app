@@ -4,7 +4,7 @@ import { View } from "react-native";
 import { useNavigation } from "expo-router";
 import { CollectionStrip } from "@/features/feed/components/collection-strip";
 import { FeedCard } from "@/features/feed/components/feed-card";
-import { useFeedPhotosQuery } from "@/features/feed/use-feed-photos-query";
+import { useFeedPhotosQuery } from "@/features/feed/hooks/use-feed-photos-query";
 import { AppText } from "@/lib/components/app-text";
 import { EmptyState } from "@/lib/components/empty-state";
 import { ErrorState } from "@/lib/components/error-state";

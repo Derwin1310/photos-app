@@ -3,7 +3,7 @@ import { Image } from "expo-image";
 import { Pressable, ScrollView, View } from "react-native";
 import { images } from "@/assets/images";
 import { AppText } from "@/lib/components/app-text";
-import { useCollectionPreviews } from "@/features/feed/use-collection-previews";
+import { useCollectionPreviews } from "@/features/feed/hooks/use-collection-previews";
 
 export function CollectionStrip() {
   const collectionPreviews = useCollectionPreviews();

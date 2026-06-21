@@ -5,7 +5,6 @@ import { Image } from "expo-image";
 import { Heart, MapPin } from "lucide-react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
-  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSequence,
@@ -43,7 +42,6 @@ export function FeedCard({ photo }: FeedCardProps) {
         withSpring(0.92, { damping: 12, stiffness: 320, mass: 0.6 }),
         withTiming(0, { duration: 120 }),
       );
-      runOnJS(likePhoto)();
     });
 
   return (

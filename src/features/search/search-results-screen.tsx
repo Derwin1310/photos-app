@@ -4,7 +4,7 @@ import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { Pressable, View } from "react-native";
 import { Image } from "expo-image";
 import { ChevronLeft } from "lucide-react-native";
-import { useSearchPhotosQuery } from "@/features/search/use-search-photos-query";
+import { useSearchPhotosQuery } from "@/features/search/hooks/use-search-photos-query";
 import { AppText } from "@/lib/components/app-text";
 import { EmptyState } from "@/lib/components/empty-state";
 import { ErrorState } from "@/lib/components/error-state";
