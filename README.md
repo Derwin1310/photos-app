@@ -1,24 +1,79 @@
-# PhotoSearch - React Native PhotoSearch app
+# PhotoSearch
 
-Welcome to PhotoSearch, a mobile application developed with React Native that allows you to take and search photos and save then.
+PhotoSearch is an Expo SDK 56 app for discovering photos, browsing themed collections, saving camera captures locally, and exploring a sample photographer map.
 
-## Key Features
+## Stack
 
-- **Photo Feed:** Explore photos and posts from your friends in an engaging news feed.
-- **User Profile:** Create a personalized profile with a profile picture, a short description.
-- **Social Interaction:** Like on your friends' photos.
-- **Explore:** Discover new photographers near your area.
+- Expo Router for file-based navigation
+- TypeScript in strict mode
+- NativeWind v4 with semantic theme tokens
+- React Query for feed and search data
+- Expo Camera, Media Library, Sharing, Image, and Splash Screen
+- Oxlint for linting
 
-## Screenshots
+## Routes
 
-![Screenshot 1](https://raw.githubusercontent.com/Derwin1310/images-for-readme-app-photos/main/first-view.jpeg)
-![Screenshot 2](https://raw.githubusercontent.com/Derwin1310/images-for-readme-app-photos/main/maps-view.jpeg)
-![Screenshot 3](https://raw.githubusercontent.com/Derwin1310/images-for-readme-app-photos/main/post-view.jpeg)
-![Screenshot 4](https://raw.githubusercontent.com/Derwin1310/images-for-readme-app-photos/main/profile-view.jpeg)
+- `/` Welcome screen
+- `/feed` Main photo-discovery feed
+- `/map` Sample photographer map
+- `/camera` Full-screen capture flow
+- `/updates` Updates coming soon state
+- `/profile` Local photo gallery
+- `/search/[query]` Typed collection search
+- `/edit-photo` Caption editor modal
 
-## Installation
+## Project Structure
 
-1. Clone this repository:
-2. Navigate to the project directory
-3. Install dependencies: `yarn install`
-4. Run yarn expo start
+```text
+app/
+  _layout.tsx
+  index.tsx
+  +not-found.tsx
+  (tabs)/
+  (modals)/
+  search/
+
+src/
+  assets/
+  features/
+  lib/
+  providers/
+  global.css
+```
+
+## Environment
+
+Create a local `.env` file with:
+
+```bash
+EXPO_PUBLIC_UNSPLASH_ACCESS_KEY=your_unsplash_access_key_here
+```
+
+`EXPO_PUBLIC_*` values are bundled into the client, so use an Unsplash key restricted for app usage.
+
+## Commands
+
+```bash
+pnpm install
+pnpm start
+pnpm typecheck
+pnpm lint
+pnpm check
+```
+
+## NativeWind Setup
+
+This project uses the stable NativeWind v4 and Tailwind CSS v3 setup:
+
+- `tailwind.config.js`
+- `metro.config.js`
+- `babel.config.js`
+- `src/global.css`
+- `nativewind-env.d.ts`
+
+## Notes
+
+- Camera permission is requested in the camera route.
+- Media library permission is requested only when saving a captured image.
+- Gallery data is stored locally and migrated from the legacy `galleryList` payload if present.
+- Expo Go should be the first validation target; create a custom build only if a native limitation requires it.

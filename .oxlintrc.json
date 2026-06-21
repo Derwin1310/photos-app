@@ -1,0 +1,19 @@
+{
+  "plugins": [
+    "react",
+    "typescript",
+    "import",
+    "promise"
+  ],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off"
+  },
+  "ignorePatterns": [
+    ".expo/**",
+    "dist/**",
+    "node_modules/**"
+  ]
+}
