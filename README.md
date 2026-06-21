@@ -1,6 +1,6 @@
 # PhotoSearch
 
-PhotoSearch is an Expo SDK 56 app for discovering photos, browsing themed collections, saving camera captures locally, and exploring a sample photographer map.
+PhotoSearch is an Expo SDK 56 app for discovering photos, browsing themed collections, and saving camera captures locally.
 
 ## Stack
 
@@ -15,9 +15,7 @@ PhotoSearch is an Expo SDK 56 app for discovering photos, browsing themed collec
 
 - `/` Welcome screen
 - `/feed` Main photo-discovery feed
-- `/map` Sample photographer map
 - `/camera` Full-screen capture flow
-- `/updates` Updates coming soon state
 - `/profile` Local photo gallery
 - `/search/[query]` Typed collection search
 - `/edit-photo` Caption editor modal
@@ -59,6 +57,29 @@ pnpm start
 pnpm typecheck
 pnpm lint
 pnpm check
+```
+
+## TestFlight
+
+This repo includes [eas.json](/Users/derwin/Development/photos-app/eas.json) for production iOS builds with automatic build number increments.
+
+Basic flow:
+
+```bash
+eas login
+npx testflight
+```
+
+Before the first submission:
+
+- Create the app in App Store Connect
+- Make sure the bundle identifier matches `com.coderwin.photos-app`
+- Ensure your Apple Developer credentials are available to EAS
+
+If credentials need attention:
+
+```bash
+eas credentials -p ios
 ```
 
 ## NativeWind Setup
