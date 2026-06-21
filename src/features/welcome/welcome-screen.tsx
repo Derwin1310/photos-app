@@ -20,7 +20,9 @@ export default function WelcomeScreen() {
           style={{ width: cardWidth }}
         >
           <View className="flex-row items-center gap-3">
-            <Image className="h-12 w-12" contentFit="contain" source={images.logo} />
+            <View className="h-12 w-12 overflow-hidden rounded-full">
+              <Image className="h-full w-full" contentFit="cover" source={images.logo} />
+            </View>
             <AppText tone="inverse" variant="headline">
               PhotoSearch
             </AppText>

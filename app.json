@@ -12,7 +12,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#f6efe8",
+          "backgroundColor": "#211e1d",
           "image": "./assets/splash-photojournal.png",
           "resizeMode": "contain",
           "imageWidth": 180
