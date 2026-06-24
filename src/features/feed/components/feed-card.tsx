@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Pressable, View } from "react-native";
 import { Image } from "expo-image";
 import { Heart, MapPin } from "lucide-react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import Animated, {
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSequence,
@@ -22,7 +23,7 @@ type FeedCardProps = {
   photo: UnsplashPhoto;
 };
 
-export function FeedCard({ photo }: FeedCardProps) {
+export const FeedCard = memo(function FeedCard({ photo }: FeedCardProps) {
   const [liked, setLiked] = useState(false);
   const heartScale = useSharedValue(0);
   const { theme } = useUnistyles();
@@ -32,10 +33,15 @@ export function FeedCard({ photo }: FeedCardProps) {
     transform: [{ scale: heartScale.value }],
   }));
 
+  function likePhoto() {
+    setLiked(true);
+  }
+
   const doubleTap = Gesture.Tap()
     .numberOfTaps(2)
     .maxDuration(220)
     .onStart(() => {
+      runOnJS(likePhoto)();
       heartScale.value = withSequence(
         withSpring(0.92, { damping: 12, stiffness: 320, mass: 0.6 }),
         withTiming(0, { duration: 120 }),
@@ -53,16 +59,23 @@ export function FeedCard({ photo }: FeedCardProps) {
           transition={180}
         />
         <View style={styles.details}>
-          <AppText variant="subheading">
+            <AppText variant="title">
             {photo.photographer.name || "Anonymous"}
           </AppText>
           <View style={styles.location}>
-            <MapPin color={theme.colors.muted} size={14} strokeWidth={2.2} />
-            <AppText tone="muted" variant="caption">
+            <MapPin color={theme.colors.textTertiary} size={theme.size.iconXs} strokeWidth={2.2} />
+            <AppText tone="muted" variant="bodySmall">
               {photo.photographer.location || "Somewhere worth wandering"}
             </AppText>
           </View>
         </View>
+      </View>
+
+      <View style={styles.storyLine}>
+        <View style={styles.storyDot} />
+        <AppText style={styles.storyLabel} variant="label">
+          Fresh perspective
+        </AppText>
       </View>
 
       <AppText>
@@ -81,8 +94,8 @@ export function FeedCard({ photo }: FeedCardProps) {
           <AnimatedView style={[styles.heartOverlay, heartStyle]}>
             <View style={styles.heartCircle}>
               <Heart
-                color={theme.colors.danger}
-                fill={theme.colors.danger}
+                color={theme.colors.accent}
+                fill={theme.colors.accent}
                 size={40}
                 strokeWidth={2.2}
               />
@@ -97,8 +110,8 @@ export function FeedCard({ photo }: FeedCardProps) {
             style={styles.likeButton}
           >
             <Heart
-              color={liked ? theme.colors.danger : theme.colors.ink}
-              fill={liked ? theme.colors.danger : "transparent"}
+              color={liked ? theme.colors.accentSecondary : theme.colors.text}
+              fill={liked ? theme.colors.accentSecondary : "transparent"}
               size={22}
               strokeWidth={2.3}
             />
@@ -106,10 +119,10 @@ export function FeedCard({ photo }: FeedCardProps) {
         </View>
       </GestureDetector>
 
-      <AppText selectable tone="muted" variant="caption">
+      <AppText selectable tone="muted" variant="bodySmall">
         Photo by {photo.photographer.name} (@{photo.photographer.username}) on
         Unsplash
       </AppText>
     </View>
   );
-}
+});

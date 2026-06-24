@@ -14,6 +14,7 @@ import { Image } from "expo-image";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import { useGallery } from "@/features/gallery/gallery-provider";
 import { AppText } from "@/lib/components/app-text";
+import { AppButton } from "@/lib/components/app-button";
 import { ErrorState } from "@/lib/components/error-state";
 import { styles } from "./edit-photo-screen.styles";
 
@@ -127,7 +128,7 @@ export default function EditPhotoScreen() {
           />
 
           <View style={styles.form}>
-            <AppText variant="subheading">Caption</AppText>
+            <AppText variant="title">Caption</AppText>
             <TextInput
               maxLength={120}
               multiline
@@ -137,12 +138,12 @@ export default function EditPhotoScreen() {
                   ? "Tell the story behind this moment"
                   : "Write a new caption"
               }
-              placeholderTextColor={theme.colors.muted}
+              placeholderTextColor={theme.colors.textTertiary}
               style={styles.input}
               textAlignVertical="top"
               value={caption}
             />
-            <AppText tone="muted" variant="caption">
+            <AppText tone="muted" variant="bodySmall">
               {caption.length}/120 characters
             </AppText>
           </View>
@@ -154,25 +155,20 @@ export default function EditPhotoScreen() {
           ) : null}
 
           <View style={styles.actions}>
-            <Pressable
-              accessibilityRole="button"
+            <AppButton
+              label="Cancel"
               onPress={() => {
                 Keyboard.dismiss();
                 router.back();
               }}
-              style={styles.button}
-            >
-              <AppText variant="subheading">Cancel</AppText>
-            </Pressable>
-            <Pressable
-              accessibilityRole="button"
+              variant="secondary"
+            />
+            <AppButton
+              label={isSaving ? "Saving..." : isDraftMode ? "Save photo" : "Save"}
+              disabled={isSaving}
               onPress={() => void saveChanges()}
-              style={[styles.button, styles.primaryButton]}
-            >
-              <AppText tone="inverse" variant="subheading">
-                {isSaving ? "Saving..." : isDraftMode ? "Save photo" : "Save"}
-              </AppText>
-            </Pressable>
+              variant="primary"
+            />
           </View>
         </View>
       </Pressable>

@@ -1,20 +1,13 @@
 import { StyleSheet } from "react-native-unistyles";
 
 export const styles = StyleSheet.create((theme) => ({
-  button: {
-    alignSelf: "flex-start",
-    backgroundColor: theme.colors.accent,
-    borderRadius: 999,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
   card: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.surfaceRaised,
     borderCurve: "continuous",
-    borderRadius: 32,
-    gap: 16,
-    paddingHorizontal: 24,
-    paddingVertical: 32,
+    borderRadius: theme.radius.lg,
+    boxShadow: theme.shadow.card,
+    gap: theme.space.md,
+    padding: theme.space.xl,
   },
-  screen: { flex: 1, justifyContent: "center", paddingHorizontal: 20 },
+  screen: { backgroundColor: theme.colors.background, flex: 1, justifyContent: "center", paddingHorizontal: theme.layout.screenGutter },
 }));

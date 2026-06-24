@@ -14,7 +14,7 @@ export function LoadingState({
 
   return (
     <View style={styles.card}>
-      <ActivityIndicator color={theme.colors.accent} size="large" />
+      <ActivityIndicator color={theme.colors.accent} size="small" />
       <AppText center tone="muted">
         {message}
       </AppText>

@@ -2,20 +2,45 @@ import { StyleSheet } from "react-native-unistyles";
 
 export const styles = StyleSheet.create((theme) => ({
   accent: { color: theme.colors.accent },
-  body: { fontFamily: theme.fonts.kalam, fontSize: 16 },
-  caption: { fontFamily: theme.fonts.kalamLight, fontSize: 14 },
+  body: {
+    color: theme.colors.text,
+    fontSize: theme.typography.body.fontSize,
+    lineHeight: theme.typography.body.lineHeight,
+  },
+  bodySmall: {
+    color: theme.colors.text,
+    fontSize: theme.typography.bodySmall.fontSize,
+    lineHeight: theme.typography.bodySmall.lineHeight,
+  },
   center: { textAlign: "center" },
   danger: { color: theme.colors.danger },
-  default: { color: theme.colors.ink },
-  headline: { fontFamily: theme.fonts.jua, fontSize: 24, lineHeight: 29 },
-  inverse: { color: theme.colors.inverse },
-  label: {
-    fontFamily: theme.fonts.kalamBold,
-    fontSize: 14,
-    letterSpacing: 1.5,
-    textTransform: "uppercase",
+  default: { color: theme.colors.text },
+  display: {
+    color: theme.colors.text,
+    fontFamily: theme.font.brand,
+    fontSize: theme.typography.display.fontSize,
+    lineHeight: theme.typography.display.lineHeight,
   },
-  muted: { color: theme.colors.muted },
-  subheading: { fontFamily: theme.fonts.kalamBold, fontSize: 18 },
-  title: { fontFamily: theme.fonts.jua, fontSize: 36, lineHeight: 43 },
+  headline: {
+    color: theme.colors.text,
+    fontSize: theme.typography.headline.fontSize,
+    fontWeight: "700",
+    lineHeight: theme.typography.headline.lineHeight,
+  },
+  inverse: { color: theme.colors.textInverse },
+  label: {
+    color: theme.colors.textSecondary,
+    fontSize: theme.typography.label.fontSize,
+    fontWeight: "600",
+    letterSpacing: theme.typography.label.letterSpacing,
+    lineHeight: theme.typography.label.lineHeight,
+    textTransform: "uppercase" as const,
+  },
+  muted: { color: theme.colors.textSecondary },
+  title: {
+    color: theme.colors.text,
+    fontSize: theme.typography.title.fontSize,
+    fontWeight: "600",
+    lineHeight: theme.typography.title.lineHeight,
+  },
 }));

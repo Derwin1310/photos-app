@@ -1,56 +1,44 @@
-import { Camera, House, UserRound } from "lucide-react-native";
-import { Tabs } from "expo-router";
+import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { useUnistyles } from "react-native-unistyles";
-import { AppIcon } from "@/lib/components/app-icon";
 
 const tabs = [
-  { name: "feed", title: "Feed", icon: House },
-  { name: "camera", title: "Camera", icon: Camera },
-  { name: "profile", title: "Profile", icon: UserRound },
+  {
+    icon: { md: { default: "home", selected: "home" }, sf: { default: "house", selected: "house.fill" } },
+    name: "feed",
+    title: "Feed",
+  },
+  {
+    icon: { md: { default: "photo_camera", selected: "photo_camera" }, sf: { default: "camera", selected: "camera.fill" } },
+    name: "camera",
+    title: "Camera",
+  },
+  {
+    icon: { md: { default: "person", selected: "person" }, sf: { default: "person", selected: "person.fill" } },
+    name: "profile",
+    title: "Profile",
+  },
 ] as const;
 
 export default function TabsLayout() {
   const { theme } = useUnistyles();
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: theme.colors.ink,
-        tabBarInactiveTintColor: theme.colors.muted,
-        tabBarShowLabel: false,
-        tabBarStyle: {
-          backgroundColor: theme.colors.surface,
-          borderTopWidth: 0,
-          height: 74,
-        },
-        headerStyle: { backgroundColor: theme.colors.surface },
-        headerTitleStyle: {
-          color: theme.colors.ink,
-          fontFamily: theme.fonts.jua,
-          fontSize: 20,
-        },
-        headerShadowVisible: false,
-        sceneStyle: { backgroundColor: theme.colors.canvas },
-      }}
+    <NativeTabs
+      tintColor={theme.colors.accent}
+      backgroundColor={theme.colors.surface}
+      indicatorColor={theme.isDark ? theme.colors.accentSoft : theme.colors.accentSecondarySoft}
+      rippleColor={theme.isDark ? theme.colors.accentPressed : theme.colors.accent}
     >
       {tabs.map(({ icon, name, title }) => (
-        <Tabs.Screen
+        <NativeTabs.Trigger
+          disableTransparentOnScrollEdge={name === "camera"}
           key={name}
           name={name}
-          options={{
-            title,
-            headerShown: name !== "camera",
-            tabBarIcon: ({ color, focused }) => (
-              <AppIcon
-                color={color}
-                icon={icon}
-                size={focused ? 25 : 22}
-                strokeWidth={focused ? 2.4 : 2.15}
-              />
-            ),
-          }}
-        />
+        >
+          <NativeTabs.Trigger.Icon md={icon.md} sf={icon.sf} />
+          <NativeTabs.Trigger.Label>{title}</NativeTabs.Trigger.Label>
+        </NativeTabs.Trigger>
       ))}
-    </Tabs>
+    </NativeTabs>
   );
 }

@@ -1,20 +1,21 @@
 import { StyleSheet } from "react-native-unistyles";
 
 export const styles = StyleSheet.create((theme) => ({
-  backButton: { alignItems: "center", borderRadius: 999, justifyContent: "center", padding: 8 },
-  content: { paddingBottom: 40, paddingHorizontal: 20 },
-  footer: { alignItems: "center", paddingVertical: 16 },
-  gridItem: { flex: 1, paddingBottom: 12, paddingHorizontal: 6 },
+  backButton: { alignItems: "center", borderRadius: theme.radius.full, justifyContent: "center", padding: theme.space.xs },
+  content: { paddingBottom: theme.space.xxxl, paddingHorizontal: theme.layout.screenGutter },
+  footer: { alignItems: "center", paddingVertical: theme.space.md },
+  gridItem: { flex: 1, paddingBottom: theme.space.sm, paddingHorizontal: theme.space.xxs },
   gridImage: { aspectRatio: 3 / 4, width: "100%" },
   gridSurface: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.imagePlaceholder,
+    borderColor: theme.colors.accentSoft,
     borderCurve: "continuous",
-    borderRadius: 22,
+    borderRadius: theme.radius.sm,
+    borderWidth: theme.border.default,
     overflow: "hidden",
   },
-  header: { gap: 8, paddingBottom: 20, paddingHorizontal: 20, paddingTop: 24 },
+  header: { gap: theme.space.xs, paddingBottom: theme.space.lg, paddingTop: theme.space.lg },
   list: { flex: 1 },
-  loading: { alignItems: "center", paddingVertical: 16 },
-  root: { backgroundColor: theme.colors.canvas, flex: 1 },
-  title: { textTransform: "capitalize" },
+  loading: { alignItems: "center", paddingVertical: theme.space.md },
+  root: { backgroundColor: theme.colors.background, flex: 1 },
 }));

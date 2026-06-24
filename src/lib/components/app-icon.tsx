@@ -17,5 +17,5 @@ export function AppIcon({
 }: AppIconProps) {
   const { theme } = useUnistyles();
 
-  return <Icon color={color ?? theme.colors.ink} size={size} strokeWidth={strokeWidth} />;
+  return <Icon color={color ?? theme.colors.text} size={size} strokeWidth={strokeWidth} />;
 }

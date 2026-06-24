@@ -2,16 +2,19 @@ import { FlashList, type FlashListRef } from "@shopify/flash-list";
 import { useEffect, useRef } from "react";
 import { View } from "react-native";
 import { useNavigation } from "expo-router";
+import { withUnistyles } from "react-native-unistyles";
 import { CollectionStrip } from "@/features/feed/components/collection-strip";
 import { FeedCard } from "@/features/feed/components/feed-card";
 import { useFeedPhotosQuery } from "@/features/feed/hooks/use-feed-photos-query";
-import { AppText } from "@/lib/components/app-text";
 import { EmptyState } from "@/lib/components/empty-state";
 import { ErrorState } from "@/lib/components/error-state";
 import { LoadingState } from "@/lib/components/loading-state";
+import { SectionHeader } from "@/lib/components/section-header";
 import type { UnsplashPhoto } from "@/lib/types/photos";
 import { getErrorMessage } from "@/lib/utils/errors";
 import { styles } from "./feed-screen.styles";
+
+const StyledFlashList = withUnistyles(FlashList) as typeof FlashList;
 
 export default function FeedScreen() {
   const listRef = useRef<FlashListRef<UnsplashPhoto>>(null);
@@ -57,16 +60,14 @@ export default function FeedScreen() {
   }
 
   return (
-    <FlashList
+    <StyledFlashList
       ref={listRef}
       ListHeaderComponent={
         <View style={styles.header}>
-          <View style={styles.intro}>
-            <AppText variant="headline">Activity feed</AppText>
-            <AppText tone="muted">
-              A warm stream of portraits, travel, and city stories.
-            </AppText>
-          </View>
+          <SectionHeader
+            subtitle="Fresh photographs from people and places worth noticing."
+            title="Discover"
+          />
           <CollectionStrip />
         </View>
       }
@@ -87,7 +88,7 @@ export default function FeedScreen() {
           </View>
         ) : !hasNextPage ? (
           <View style={styles.footer}>
-            <AppText tone="muted">You reached the end of this batch.</AppText>
+            <SectionHeader subtitle="You are up to date." title="That is everything" />
           </View>
         ) : null
       }

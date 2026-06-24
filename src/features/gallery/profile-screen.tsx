@@ -1,5 +1,5 @@
 import { FlashList } from "@shopify/flash-list";
-import { Alert, Pressable, View } from "react-native";
+import { Alert, View } from "react-native";
 import { router } from "expo-router";
 import { Image } from "expo-image";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
@@ -9,13 +9,16 @@ import { Camera, Heart, Pencil, Share2, Trash2, Users } from "lucide-react-nativ
 import { images } from "@/assets/images";
 import { useGallery } from "@/features/gallery/gallery-provider";
 import { AppText } from "@/lib/components/app-text";
+import { AppButton } from "@/lib/components/app-button";
 import { EmptyState } from "@/lib/components/empty-state";
 import { ErrorState } from "@/lib/components/error-state";
+import { SectionHeader } from "@/lib/components/section-header";
 import type { GalleryPhoto } from "@/lib/types/gallery";
 import { formatCompactNumber, formatGalleryDate } from "@/lib/utils/format";
 import { styles } from "./profile-screen.styles";
 
 const StyledImage = withUnistyles(Image);
+const StyledFlashList = withUnistyles(FlashList) as typeof FlashList;
 
 const profileStats = [
   { icon: Camera, label: "Photos" },
@@ -86,7 +89,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <FlashList<GalleryPhoto>
+    <StyledFlashList<GalleryPhoto>
       ListHeaderComponent={
         <View style={styles.header}>
           <View style={styles.profileCard}>
@@ -99,23 +102,33 @@ export default function ProfileScreen() {
               <View style={styles.profileInfo}>
                 <AppText variant="headline">Lina Rios</AppText>
                 <AppText tone="muted">@lina_rios</AppText>
-                <AppText tone="muted">
+                <AppText tone="muted" variant="bodySmall">
                   Photo journaler collecting city moments one frame at a time.
                 </AppText>
               </View>
             </View>
 
             <View style={styles.statRow}>
-              {profileStats.map(({ icon: Icon, label }) => (
+              {profileStats.map(({ icon: Icon, label }, index) => (
                 <View
                   key={label}
-                  style={styles.stat}
+                  style={styles.stat(index)}
                 >
-                  <Icon color={theme.colors.accent} size={22} strokeWidth={2.2} />
-                  <AppText style={styles.statValue} variant="subheading">
+                  <Icon
+                    color={
+                      index === 0
+                        ? theme.colors.accent
+                        : index === 1
+                          ? theme.colors.accentSecondary
+                          : theme.colors.accentTertiary
+                    }
+                    size={theme.size.iconMd}
+                    strokeWidth={2.2}
+                  />
+                  <AppText style={styles.statValue} variant="title">
                     {formatCompactNumber(statValues[label])}
                   </AppText>
-                  <AppText tone="muted" variant="caption">
+                  <AppText tone="muted" variant="bodySmall">
                     {label}
                   </AppText>
                 </View>
@@ -123,12 +136,10 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          <View style={styles.section}>
-            <AppText variant="headline">My photos</AppText>
-            <AppText tone="muted">
-              Captures saved from the camera tab live here automatically.
-            </AppText>
-          </View>
+          <SectionHeader
+            subtitle="Captures saved from the camera tab live here automatically."
+            title="My photos"
+          />
         </View>
       }
       contentInsetAdjustmentBehavior="automatic"
@@ -153,51 +164,28 @@ export default function ProfileScreen() {
             />
             <View style={styles.info}>
               <View>
-                <AppText variant="subheading">
+                <AppText variant="title">
                   {item.caption || "Untitled memory"}
                 </AppText>
-                <AppText tone="muted" variant="caption">
+                <AppText tone="muted" variant="bodySmall">
                   Updated {formatGalleryDate(item.updatedAt)}
                 </AppText>
               </View>
               <View style={styles.actions}>
-                <Pressable
-                  accessibilityLabel="Share photo"
-                  onPress={() => void sharePhoto(item.uri)}
-                  style={styles.action}
-                >
-                  <View style={styles.actionRow}>
-                    <Share2 color={theme.colors.ink} size={18} strokeWidth={2.2} />
-                    <AppText variant="caption">Share</AppText>
-                  </View>
-                </Pressable>
-                <Pressable
-                  accessibilityLabel="Edit caption"
+                <AppButton icon={Share2} label="Share" onPress={() => void sharePhoto(item.uri)} size="sm" variant="secondary" />
+                <AppButton
+                  icon={Pencil}
+                  label="Edit"
                   onPress={() =>
                     router.push({
                       pathname: "/(modals)/edit-photo",
                       params: { photoId: item.id },
                     })
                   }
-                  style={styles.action}
-                >
-                  <View style={styles.actionRow}>
-                    <Pencil color={theme.colors.ink} size={18} strokeWidth={2.2} />
-                    <AppText variant="caption">Edit</AppText>
-                  </View>
-                </Pressable>
-                <Pressable
-                  accessibilityLabel="Delete photo"
-                  onPress={() => void confirmDelete(item.id)}
-                  style={styles.action}
-                >
-                  <View style={styles.actionRow}>
-                    <Trash2 color={theme.colors.danger} size={18} strokeWidth={2.2} />
-                    <AppText tone="danger" variant="caption">
-                      Delete
-                    </AppText>
-                  </View>
-                </Pressable>
+                  size="sm"
+                  variant="secondary"
+                />
+                <AppButton icon={Trash2} label="Delete" onPress={() => void confirmDelete(item.id)} size="sm" variant="destructive" />
               </View>
             </View>
           </View>

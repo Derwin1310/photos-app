@@ -3,12 +3,12 @@ import { StyleSheet } from "react-native-unistyles";
 export const styles = StyleSheet.create((theme) => ({
   card: {
     alignItems: "center",
-    backgroundColor: theme.colors.surfaceMuted,
+    backgroundColor: theme.colors.surfaceRaised,
     borderCurve: "continuous",
-    borderRadius: 28,
-    gap: 12,
+    borderRadius: theme.radius.lg,
+    boxShadow: theme.shadow.card,
+    gap: theme.space.sm,
     justifyContent: "center",
-    paddingHorizontal: 24,
-    paddingVertical: 32,
+    padding: theme.space.xl,
   },
 }));

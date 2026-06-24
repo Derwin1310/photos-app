@@ -1,5 +1,6 @@
-import { Link } from "expo-router";
-import { Pressable, View } from "react-native";
+import { router } from "expo-router";
+import { View } from "react-native";
+import { AppButton } from "@/lib/components/app-button";
 import { AppText } from "@/lib/components/app-text";
 import { styles } from "./not-found-screen.styles";
 
@@ -12,13 +13,7 @@ export default function NotFoundScreen() {
           The route you requested is not available. You can head back to the home
           screen and keep exploring from there.
         </AppText>
-        <Link asChild href="/">
-          <Pressable style={styles.button}>
-            <AppText tone="inverse" variant="subheading">
-              Back home
-            </AppText>
-          </Pressable>
-        </Link>
+        <AppButton label="Back home" onPress={() => router.replace("/")} />
       </View>
     </View>
   );

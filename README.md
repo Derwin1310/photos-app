@@ -1,12 +1,12 @@
 # PicXplorer
 
-PicXplorer is an Expo SDK 54 app for discovering photos, browsing themed collections, and saving camera captures locally.
+PicXplorer is an Expo SDK 56 native photo gallery for discovering photos, browsing themed collections, and saving camera captures locally.
 
 ## Stack
 
 - Expo Router for file-based navigation
 - TypeScript in strict mode
-- React Native Unistyles v3 with typed light-theme tokens
+- React Native Unistyles v3 with typed light and dark themes
 - React Query for feed and search data
 - Expo Camera, Media Library, Sharing, Image, and Splash Screen
 - Oxlint for linting
@@ -93,8 +93,9 @@ eas credentials -p ios
 
 ## Styling
 
-This project uses Unistyles v3 with the current light palette registered in
-`src/theme/unistyles.ts`. Styles live beside the component that owns them:
+This project uses Unistyles v3 with semantic tokens in `src/theme/tokens.ts`
+and registered light/dark themes in `src/theme/unistyles.ts`. Styles live beside
+the component that owns them:
 
 ```text
 feed-card.tsx
@@ -103,6 +104,12 @@ feed-card.styles.ts
 
 Each stylesheet imports `StyleSheet` directly from `react-native-unistyles`.
 Do not spread Unistyles styles or re-export `StyleSheet` through a barrel.
+
+Appearance defaults to the device setting. Users can choose `System`, `Light`,
+or `Dark` from the Profile appearance sheet; the preference is stored locally.
+Use theme tokens (`theme.colors`, `theme.space`, `theme.radius`, and
+`theme.typography`) instead of literal visual values. Navigator options and
+other non-style props should use `useUnistyles()` rather than bound styles.
 
 ## Notes
 

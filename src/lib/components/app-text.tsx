@@ -2,12 +2,12 @@ import { Text, type TextProps } from "react-native";
 import { styles } from "./app-text.styles";
 
 type AppTextVariant =
-  | "title"
-  | "headline"
-  | "subheading"
   | "body"
-  | "caption"
-  | "label";
+  | "bodySmall"
+  | "display"
+  | "headline"
+  | "label"
+  | "title";
 
 type AppTextTone = "default" | "muted" | "accent" | "danger" | "inverse";
 

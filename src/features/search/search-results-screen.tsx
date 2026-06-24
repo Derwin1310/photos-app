@@ -10,11 +10,13 @@ import { AppText } from "@/lib/components/app-text";
 import { EmptyState } from "@/lib/components/empty-state";
 import { ErrorState } from "@/lib/components/error-state";
 import { LoadingState } from "@/lib/components/loading-state";
+import { SectionHeader } from "@/lib/components/section-header";
 import { formatCompactNumber } from "@/lib/utils/format";
 import { getErrorMessage } from "@/lib/utils/errors";
 import { styles } from "./search-results-screen.styles";
 
 const StyledImage = withUnistyles(Image);
+const StyledFlashList = withUnistyles(FlashList) as typeof FlashList;
 
 // ponytail: native back is unreliable after repeated collection routes; dismissTo always returns to Feed.
 function BackToFeedButton() {
@@ -28,7 +30,7 @@ function BackToFeedButton() {
         hitSlop={10}
         style={styles.backButton}
       >
-        <ChevronLeft color={theme.colors.ink} size={26} strokeWidth={2.4} />
+        <ChevronLeft color={theme.colors.text} size={theme.size.iconLg} strokeWidth={2.4} />
       </Pressable>
     </Link>
   );
@@ -63,17 +65,17 @@ export default function SearchResultsScreen() {
         }}
       />
 
-      <FlashList
+      <StyledFlashList
         ListHeaderComponent={
           <View style={styles.header}>
-            <AppText style={styles.title} variant="headline">
-              {normalizedTitle}
-            </AppText>
-            <AppText tone="muted">
-              {totalResults > 0
-                ? `${formatCompactNumber(totalResults)} results ready to browse`
-                : "Browse a tidy grid of photo results"}
-            </AppText>
+            <SectionHeader
+              subtitle={
+                totalResults > 0
+                  ? `${formatCompactNumber(totalResults)} results ready to browse`
+                  : "Browse a clean grid of photo results"
+              }
+              title={normalizedTitle}
+            />
           </View>
         }
         contentInsetAdjustmentBehavior="automatic"
@@ -97,7 +99,7 @@ export default function SearchResultsScreen() {
             <LoadingState message="Loading more results..." />
           ) : !hasNextPage && photos.length > 0 ? (
             <View style={styles.footer}>
-              <AppText tone="muted">You made it to the end of the results.</AppText>
+              <AppText tone="muted" variant="bodySmall">You made it to the end of the results.</AppText>
             </View>
           ) : null
         }

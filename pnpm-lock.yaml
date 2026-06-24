@@ -14,9 +14,6 @@ importers:
       '@expo-google-fonts/jua':
         specifier: ^0.2.2
         version: 0.2.3
-      '@expo-google-fonts/kalam':
-        specifier: ^0.2.2
-        version: 0.2.3
       '@react-native-async-storage/async-storage':
         specifier: ^2.2.0
         version: 2.2.0(react-native@0.85.3(@babel/core@7.29.7)(@react-native/metro-config@0.85.3(@babel/core@7.29.7))(@types/react@19.2.17)(react@19.2.3))
@@ -518,9 +515,6 @@ packages:
 
   '@expo-google-fonts/jua@0.2.3':
     resolution: {integrity: sha512-O20LgzRMm/4byNqZK9eGM1IAl0D0c9HT89z92mmK8TwrPezn33jguh9aIoB7yrc433OExe2IGD6laRqAIXAdUA==}
-
-  '@expo-google-fonts/kalam@0.2.3':
-    resolution: {integrity: sha512-UJgRtwGwiHUgiutvw2VRd5QZDrmwiiYTYxFibQpr9B43SfupvjDfJMr74ILVkTJ0Hng2CMw2RvGcWJW6icyN/w==}
 
   '@expo-google-fonts/material-symbols@0.4.38':
     resolution: {integrity: sha512-IJkBtN1o8u9BW5fvSii1MyHPQ7Q0HxbWcVBvOrOzgMLpVtZw7R2w94wBTVR7kZwv3w1JNTESMmLA5Sqn1+Z36A==}
@@ -3587,8 +3581,6 @@ snapshots:
       '@types/hammerjs': 2.0.46
 
   '@expo-google-fonts/jua@0.2.3': {}
-
-  '@expo-google-fonts/kalam@0.2.3': {}
 
   '@expo-google-fonts/material-symbols@0.4.38': {}
 

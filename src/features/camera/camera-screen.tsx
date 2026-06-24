@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Alert, Pressable, View } from "react-native";
 import { CameraView, type CameraType, useCameraPermissions } from "expo-camera";
 import { Image } from "expo-image";
 import * as Haptics from "expo-haptics";
 import { router, useFocusEffect } from "expo-router";
 import { Circle, Flashlight, FlashlightOff, RotateCcw, Trash2, Type } from "lucide-react-native";
-import { useRef } from "react";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import { IconButton } from "@/lib/components/icon-button";
 import { AppText } from "@/lib/components/app-text";
@@ -106,7 +105,7 @@ export default function CameraScreen() {
           <View style={styles.draftOverlay}>
             <View>
               <View style={styles.message}>
-                <AppText center tone="inverse" variant="caption">
+                <AppText center tone="inverse" variant="bodySmall">
                   Continue to the caption sheet to name this moment and save it to
                   your gallery.
                 </AppText>
@@ -117,16 +116,13 @@ export default function CameraScreen() {
               <View style={styles.draftRow}>
                 <IconButton
                   icon={Trash2}
-                  iconColor={theme.colors.inverse}
                   label="Discard photo"
                   onPress={discardPhoto}
                   showLabel
-                  style={styles.transparentButton}
-                  textStyle={styles.inverseText}
+                  variant="overlay"
                 />
                 <IconButton
                   icon={Type}
-                  iconColor={theme.colors.ink}
                   label="Add caption"
                   onPress={() =>
                     router.push({
@@ -135,7 +131,7 @@ export default function CameraScreen() {
                     })
                   }
                   showLabel
-                  style={styles.lightButton}
+                  variant="primary"
                 />
               </View>
             </View>
@@ -156,10 +152,9 @@ export default function CameraScreen() {
             <View style={styles.topControl}>
               <IconButton
                 icon={torchEnabled ? Flashlight : FlashlightOff}
-                iconColor={theme.colors.inverse}
                 label={torchEnabled ? "Torch on" : "Torch off"}
                 onPress={() => setTorchEnabled((value) => !value)}
-                style={styles.transparentButton}
+                variant="overlay"
               />
             </View>
 
@@ -172,12 +167,11 @@ export default function CameraScreen() {
               <View style={styles.captureRow}>
                 <IconButton
                   icon={RotateCcw}
-                  iconColor={theme.colors.inverse}
                   label="Flip camera"
                   onPress={() =>
                     setFacing((value) => (value === "back" ? "front" : "back"))
                   }
-                  style={styles.transparentButton}
+                  variant="overlay"
                 />
                 <Pressable
                   accessibilityLabel="Capture photo"
@@ -188,7 +182,7 @@ export default function CameraScreen() {
                   onPress={() => void capturePhoto()}
                   style={styles.shutter}
                 >
-                  <Circle color={theme.colors.inverse} fill={theme.colors.inverse} size={54} strokeWidth={1.8} />
+                  <Circle color={theme.colors.accentSecondary} fill={theme.colors.accentSecondary} size={theme.size.shutterIcon} strokeWidth={1.8} />
                 </Pressable>
                 <View style={styles.spacer} />
               </View>

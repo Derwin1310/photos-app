@@ -1,4 +1,5 @@
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
+import { AppButton } from "@/lib/components/app-button";
 import { AppText } from "@/lib/components/app-text";
 import { styles } from "./error-state.styles";
 
@@ -20,15 +21,7 @@ export function ErrorState({
         {message}
       </AppText>
       {onRetry ? (
-        <Pressable
-          accessibilityRole="button"
-          style={styles.button}
-          onPress={onRetry}
-        >
-          <AppText tone="inverse" variant="subheading">
-            {actionLabel}
-          </AppText>
-        </Pressable>
+        <AppButton label={actionLabel} onPress={onRetry} size="sm" />
       ) : null}
     </View>
   );
