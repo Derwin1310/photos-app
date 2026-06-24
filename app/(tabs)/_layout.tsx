@@ -1,5 +1,6 @@
 import { Camera, House, UserRound } from "lucide-react-native";
 import { Tabs } from "expo-router";
+import { useUnistyles } from "react-native-unistyles";
 import { AppIcon } from "@/lib/components/app-icon";
 
 const tabs = [
@@ -9,29 +10,27 @@ const tabs = [
 ] as const;
 
 export default function TabsLayout() {
+  const { theme } = useUnistyles();
+
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#3a3636",
-        tabBarInactiveTintColor: "#8a7d73",
+        tabBarActiveTintColor: theme.colors.ink,
+        tabBarInactiveTintColor: theme.colors.muted,
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: "#f4dfca",
+          backgroundColor: theme.colors.surface,
           borderTopWidth: 0,
           height: 74,
         },
-        headerStyle: {
-          backgroundColor: "#f4dfca",
-        },
+        headerStyle: { backgroundColor: theme.colors.surface },
         headerTitleStyle: {
-          color: "#3a3636",
-          fontFamily: "Jua_400Regular",
+          color: theme.colors.ink,
+          fontFamily: theme.fonts.jua,
           fontSize: 20,
         },
         headerShadowVisible: false,
-        sceneStyle: {
-          backgroundColor: "#f6efe8",
-        },
+        sceneStyle: { backgroundColor: theme.colors.canvas },
       }}
     >
       {tabs.map(({ icon, name, title }) => (

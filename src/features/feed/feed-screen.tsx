@@ -11,6 +11,7 @@ import { ErrorState } from "@/lib/components/error-state";
 import { LoadingState } from "@/lib/components/loading-state";
 import type { UnsplashPhoto } from "@/lib/types/photos";
 import { getErrorMessage } from "@/lib/utils/errors";
+import { styles } from "./feed-screen.styles";
 
 export default function FeedScreen() {
   const listRef = useRef<FlashListRef<UnsplashPhoto>>(null);
@@ -41,7 +42,7 @@ export default function FeedScreen() {
 
   if (isPending) {
     return (
-      <View className="flex-1 justify-center px-5">
+      <View style={styles.centered}>
         <LoadingState />
       </View>
     );
@@ -49,7 +50,7 @@ export default function FeedScreen() {
 
   if (error) {
     return (
-      <View className="flex-1 justify-center px-5">
+      <View style={styles.centered}>
         <ErrorState message={getErrorMessage(error)} onRetry={() => void refetch()} />
       </View>
     );
@@ -59,8 +60,8 @@ export default function FeedScreen() {
     <FlashList
       ref={listRef}
       ListHeaderComponent={
-        <View className="gap-6 pb-6 pt-6">
-          <View className="gap-2">
+        <View style={styles.header}>
+          <View style={styles.intro}>
             <AppText variant="headline">Activity feed</AppText>
             <AppText tone="muted">
               A warm stream of portraits, travel, and city stories.
@@ -69,9 +70,8 @@ export default function FeedScreen() {
           <CollectionStrip />
         </View>
       }
-      className="flex-1 bg-canvas"
       contentInsetAdjustmentBehavior="automatic"
-      contentContainerClassName="px-5 pb-10"
+      contentContainerStyle={styles.content}
       data={photos}
       keyExtractor={(item) => item.id}
       ListEmptyComponent={
@@ -82,16 +82,16 @@ export default function FeedScreen() {
       }
       ListFooterComponent={
         isFetchingNextPage ? (
-          <View className="pt-3">
+          <View style={styles.loadingFooter}>
             <LoadingState message="Fetching more inspiration..." />
           </View>
         ) : !hasNextPage ? (
-          <View className="items-center py-6">
+          <View style={styles.footer}>
             <AppText tone="muted">You reached the end of this batch.</AppText>
           </View>
         ) : null
       }
-      ItemSeparatorComponent={() => <View className="h-5" />}
+      ItemSeparatorComponent={() => <View style={styles.separator} />}
       onEndReached={() => {
         if (!hasNextPage || isFetchingNextPage) {
           return;
@@ -104,6 +104,7 @@ export default function FeedScreen() {
       refreshing={isRefetching}
       renderItem={({ item }) => <FeedCard photo={item} />}
       showsVerticalScrollIndicator={false}
+      style={styles.list}
     />
   );
 }

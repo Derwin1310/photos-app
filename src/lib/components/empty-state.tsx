@@ -1,5 +1,6 @@
 import { View } from "react-native";
 import { AppText } from "@/lib/components/app-text";
+import { styles } from "./empty-state.styles";
 
 type EmptyStateProps = {
   title: string;
@@ -8,7 +9,7 @@ type EmptyStateProps = {
 
 export function EmptyState({ title, message }: EmptyStateProps) {
   return (
-    <View className="gap-3 rounded-[28px] bg-surface px-6 py-8">
+    <View style={styles.card}>
       <AppText variant="headline">{title}</AppText>
       <AppText tone="muted">{message}</AppText>
     </View>

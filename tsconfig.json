@@ -4,21 +4,18 @@
     "strict": true,
     "allowJs": false,
     "baseUrl": ".",
-    "ignoreDeprecations": "5.0",
+    "ignoreDeprecations": "6.0",
     "paths": {
       "@/*": [
         "src/*"
       ]
     },
-    "types": [
-      "nativewind/types"
-    ]
+    "types": []
   },
   "include": [
     "app",
     "src",
     ".expo/types/**/*.ts",
-    "nativewind-env.d.ts",
     "expo-env.d.ts"
   ]
 }

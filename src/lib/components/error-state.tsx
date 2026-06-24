@@ -1,5 +1,6 @@
 import { Pressable, View } from "react-native";
 import { AppText } from "@/lib/components/app-text";
+import { styles } from "./error-state.styles";
 
 type ErrorStateProps = {
   message: string;
@@ -13,7 +14,7 @@ export function ErrorState({
   onRetry,
 }: ErrorStateProps) {
   return (
-    <View className="gap-4 rounded-[28px] bg-surface px-6 py-8">
+    <View style={styles.card}>
       <AppText variant="headline">A small hiccup</AppText>
       <AppText selectable tone="muted">
         {message}
@@ -21,7 +22,7 @@ export function ErrorState({
       {onRetry ? (
         <Pressable
           accessibilityRole="button"
-          className="self-start rounded-full bg-accent px-5 py-3"
+          style={styles.button}
           onPress={onRetry}
         >
           <AppText tone="inverse" variant="subheading">

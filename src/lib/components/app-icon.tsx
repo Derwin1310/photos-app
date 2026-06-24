@@ -1,5 +1,6 @@
 import type { ColorValue } from "react-native";
 import type { LucideIcon } from "lucide-react-native";
+import { useUnistyles } from "react-native-unistyles";
 
 type AppIconProps = {
   icon: LucideIcon;
@@ -10,9 +11,11 @@ type AppIconProps = {
 
 export function AppIcon({
   icon: Icon,
-  color = "#3a3636",
+  color,
   size = 22,
   strokeWidth = 2.25,
 }: AppIconProps) {
-  return <Icon color={color} size={size} strokeWidth={strokeWidth} />;
+  const { theme } = useUnistyles();
+
+  return <Icon color={color ?? theme.colors.ink} size={size} strokeWidth={strokeWidth} />;
 }

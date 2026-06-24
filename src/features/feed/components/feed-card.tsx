@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Pressable, View } from "react-native";
-import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { Heart, MapPin } from "lucide-react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -13,8 +13,10 @@ import Animated, {
 } from "react-native-reanimated";
 import { AppText } from "@/lib/components/app-text";
 import type { UnsplashPhoto } from "@/lib/types/photos";
+import { styles } from "./feed-card.styles";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
+const StyledImage = withUnistyles(Image);
 
 type FeedCardProps = {
   photo: UnsplashPhoto;
@@ -23,16 +25,12 @@ type FeedCardProps = {
 export function FeedCard({ photo }: FeedCardProps) {
   const [liked, setLiked] = useState(false);
   const heartScale = useSharedValue(0);
+  const { theme } = useUnistyles();
 
   const heartStyle = useAnimatedStyle(() => ({
     opacity: heartScale.value === 0 ? 0 : 1,
     transform: [{ scale: heartScale.value }],
   }));
-
-  const likePhoto = () => {
-    setLiked(true);
-    Haptics.selectionAsync().catch(() => undefined);
-  };
 
   const doubleTap = Gesture.Tap()
     .numberOfTaps(2)
@@ -45,21 +43,21 @@ export function FeedCard({ photo }: FeedCardProps) {
     });
 
   return (
-    <View className="gap-4 rounded-[32px] bg-surface px-4 py-4">
-      <View className="flex-row items-center gap-3">
-        <Image
-          className="h-12 w-12 rounded-full border border-accent/20 bg-canvas"
+    <View style={styles.card}>
+      <View style={styles.profile}>
+        <StyledImage
           contentFit="cover"
           recyclingKey={`${photo.id}-avatar`}
           source={{ uri: photo.photographer.profileImageUrl }}
+          style={styles.avatar}
           transition={180}
         />
-        <View className="flex-1">
+        <View style={styles.details}>
           <AppText variant="subheading">
             {photo.photographer.name || "Anonymous"}
           </AppText>
-          <View className="flex-row items-center gap-1">
-            <MapPin color="#8a7d73" size={14} strokeWidth={2.2} />
+          <View style={styles.location}>
+            <MapPin color={theme.colors.muted} size={14} strokeWidth={2.2} />
             <AppText tone="muted" variant="caption">
               {photo.photographer.location || "Somewhere worth wandering"}
             </AppText>
@@ -72,19 +70,19 @@ export function FeedCard({ photo }: FeedCardProps) {
       </AppText>
 
       <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
-        <View className="overflow-hidden rounded-[28px] bg-canvas">
-          <Image
-            className="aspect-[4/5] w-full"
+        <View style={styles.imageContainer}>
+          <StyledImage
             contentFit="cover"
             recyclingKey={`${photo.id}-photo`}
             source={{ uri: photo.imageUrl }}
+            style={styles.image}
             transition={220}
           />
-          <AnimatedView className="absolute inset-0 items-center justify-center" style={heartStyle}>
-            <View className="rounded-full bg-white/90 p-5">
+          <AnimatedView style={[styles.heartOverlay, heartStyle]}>
+            <View style={styles.heartCircle}>
               <Heart
-                color="#b55151"
-                fill="#b55151"
+                color={theme.colors.danger}
+                fill={theme.colors.danger}
                 size={40}
                 strokeWidth={2.2}
               />
@@ -94,13 +92,13 @@ export function FeedCard({ photo }: FeedCardProps) {
             accessibilityLabel={liked ? "Unlike photo" : "Like photo"}
             accessibilityRole="button"
             accessibilityState={{ selected: liked }}
-            className="absolute bottom-4 right-4 rounded-full bg-white/90 p-3"
             hitSlop={8}
             onPress={() => setLiked((value) => !value)}
+            style={styles.likeButton}
           >
             <Heart
-              color={liked ? "#b55151" : "#3a3636"}
-              fill={liked ? "#b55151" : "transparent"}
+              color={liked ? theme.colors.danger : theme.colors.ink}
+              fill={liked ? theme.colors.danger : "transparent"}
               size={22}
               strokeWidth={2.3}
             />

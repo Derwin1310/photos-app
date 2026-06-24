@@ -1,16 +1,20 @@
 import { Link } from "expo-router";
 import { Image } from "expo-image";
 import { Pressable, ScrollView, View } from "react-native";
+import { withUnistyles } from "react-native-unistyles";
 import { images } from "@/assets/images";
 import { AppText } from "@/lib/components/app-text";
 import { useCollectionPreviews } from "@/features/feed/hooks/use-collection-previews";
+import { styles } from "./collection-strip.styles";
+
+const StyledImage = withUnistyles(Image);
 
 export function CollectionStrip() {
   const collectionPreviews = useCollectionPreviews();
 
   return (
-    <View className="gap-4">
-      <View className="flex-row items-center justify-between">
+    <View style={styles.root}>
+      <View style={styles.titleRow}>
         <AppText variant="headline">My collections</AppText>
         <AppText tone="muted" variant="caption">
           Tap a mood to explore
@@ -21,7 +25,7 @@ export function CollectionStrip() {
         horizontal
         showsHorizontalScrollIndicator={false}
       >
-        <View className="flex-row gap-4 pr-6">
+        <View style={styles.list}>
           {collectionPreviews.map(({ collection, preview }) => (
             <Link
               key={collection}
@@ -35,10 +39,9 @@ export function CollectionStrip() {
               <Pressable
                 accessibilityHint={`Browse ${collection} photos`}
                 accessibilityRole="button"
-                className="w-28 gap-2"
+                style={styles.card}
               >
-                <Image
-                  className="h-28 w-28 rounded-[24px] bg-surface"
+                <StyledImage
                   contentFit="cover"
                   recyclingKey={preview?.id ?? collection}
                   source={
@@ -46,9 +49,10 @@ export function CollectionStrip() {
                       ? { uri: preview.thumbUrl || preview.imageUrl }
                       : images.collectionPlaceholder
                   }
+                  style={styles.image}
                   transition={180}
                 />
-                <AppText className="capitalize" variant="subheading">
+                <AppText style={styles.title} variant="subheading">
                   {collection}
                 </AppText>
               </Pressable>

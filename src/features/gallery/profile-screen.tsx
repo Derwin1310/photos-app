@@ -2,6 +2,7 @@ import { FlashList } from "@shopify/flash-list";
 import { Alert, Pressable, View } from "react-native";
 import { router } from "expo-router";
 import { Image } from "expo-image";
+import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import * as Haptics from "expo-haptics";
 import * as Sharing from "expo-sharing";
 import { Camera, Heart, Pencil, Share2, Trash2, Users } from "lucide-react-native";
@@ -12,6 +13,9 @@ import { EmptyState } from "@/lib/components/empty-state";
 import { ErrorState } from "@/lib/components/error-state";
 import type { GalleryPhoto } from "@/lib/types/gallery";
 import { formatCompactNumber, formatGalleryDate } from "@/lib/utils/format";
+import { styles } from "./profile-screen.styles";
+
+const StyledImage = withUnistyles(Image);
 
 const profileStats = [
   { icon: Camera, label: "Photos" },
@@ -21,6 +25,7 @@ const profileStats = [
 
 export default function ProfileScreen() {
   const { deletePhoto, error, hydrated, photos } = useGallery();
+  const { theme } = useUnistyles();
 
   async function sharePhoto(uri: string) {
     try {
@@ -64,7 +69,7 @@ export default function ProfileScreen() {
 
   if (!hydrated) {
     return (
-      <View className="flex-1 justify-center px-5">
+      <View style={styles.centered}>
         <AppText center tone="muted">
           Loading your gallery...
         </AppText>
@@ -74,7 +79,7 @@ export default function ProfileScreen() {
 
   if (error) {
     return (
-      <View className="flex-1 justify-center px-5">
+      <View style={styles.centered}>
         <ErrorState message={error} />
       </View>
     );
@@ -83,15 +88,15 @@ export default function ProfileScreen() {
   return (
     <FlashList<GalleryPhoto>
       ListHeaderComponent={
-        <View className="gap-6 px-5 pb-5 pt-6">
-          <View className="gap-5 rounded-[32px] bg-surface px-5 py-5">
-            <View className="flex-row items-center gap-4">
-              <Image
-                className="h-24 w-24 rounded-full bg-canvas"
+        <View style={styles.header}>
+          <View style={styles.profileCard}>
+            <View style={styles.profileRow}>
+              <StyledImage
                 contentFit="cover"
                 source={images.ownerProfile}
+                style={styles.profileImage}
               />
-              <View className="flex-1 gap-1">
+              <View style={styles.profileInfo}>
                 <AppText variant="headline">Lina Rios</AppText>
                 <AppText tone="muted">@lina_rios</AppText>
                 <AppText tone="muted">
@@ -100,14 +105,14 @@ export default function ProfileScreen() {
               </View>
             </View>
 
-            <View className="flex-row justify-between gap-3">
+            <View style={styles.statRow}>
               {profileStats.map(({ icon: Icon, label }) => (
                 <View
                   key={label}
-                  className="flex-1 rounded-[24px] bg-canvas px-4 py-4"
+                  style={styles.stat}
                 >
-                  <Icon color="#ab7e57" size={22} strokeWidth={2.2} />
-                  <AppText className="mt-3" variant="subheading">
+                  <Icon color={theme.colors.accent} size={22} strokeWidth={2.2} />
+                  <AppText style={styles.statValue} variant="subheading">
                     {formatCompactNumber(statValues[label])}
                   </AppText>
                   <AppText tone="muted" variant="caption">
@@ -118,7 +123,7 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          <View className="gap-1">
+          <View style={styles.section}>
             <AppText variant="headline">My photos</AppText>
             <AppText tone="muted">
               Captures saved from the camera tab live here automatically.
@@ -126,9 +131,8 @@ export default function ProfileScreen() {
           </View>
         </View>
       }
-      className="flex-1 bg-canvas"
       contentInsetAdjustmentBehavior="automatic"
-      contentContainerClassName="px-5 pb-10"
+      contentContainerStyle={styles.content}
       data={photos}
       keyExtractor={(item) => item.id}
       ListEmptyComponent={
@@ -137,17 +141,17 @@ export default function ProfileScreen() {
           title="Your gallery is empty"
         />
       }
-      ItemSeparatorComponent={() => <View className="h-4" />}
+      ItemSeparatorComponent={() => <View style={styles.separator} />}
       renderItem={({ item }) => (
-        <View className="gap-4 rounded-[28px] bg-surface p-4">
-          <View className="flex-row gap-4">
-            <Image
-              className="h-24 w-24 rounded-[20px] bg-canvas"
+        <View style={styles.card}>
+          <View style={styles.photoRow}>
+            <StyledImage
               contentFit="cover"
               source={{ uri: item.uri }}
+              style={styles.image}
               transition={180}
             />
-            <View className="flex-1 justify-between gap-3">
+            <View style={styles.info}>
               <View>
                 <AppText variant="subheading">
                   {item.caption || "Untitled memory"}
@@ -156,39 +160,39 @@ export default function ProfileScreen() {
                   Updated {formatGalleryDate(item.updatedAt)}
                 </AppText>
               </View>
-              <View className="flex-row flex-wrap gap-2">
+              <View style={styles.actions}>
                 <Pressable
                   accessibilityLabel="Share photo"
-                  className="rounded-full bg-canvas px-3 py-2"
                   onPress={() => void sharePhoto(item.uri)}
+                  style={styles.action}
                 >
-                  <View className="flex-row items-center gap-2">
-                    <Share2 color="#3a3636" size={18} strokeWidth={2.2} />
+                  <View style={styles.actionRow}>
+                    <Share2 color={theme.colors.ink} size={18} strokeWidth={2.2} />
                     <AppText variant="caption">Share</AppText>
                   </View>
                 </Pressable>
                 <Pressable
                   accessibilityLabel="Edit caption"
-                  className="rounded-full bg-canvas px-3 py-2"
                   onPress={() =>
                     router.push({
                       pathname: "/(modals)/edit-photo",
                       params: { photoId: item.id },
                     })
                   }
+                  style={styles.action}
                 >
-                  <View className="flex-row items-center gap-2">
-                    <Pencil color="#3a3636" size={18} strokeWidth={2.2} />
+                  <View style={styles.actionRow}>
+                    <Pencil color={theme.colors.ink} size={18} strokeWidth={2.2} />
                     <AppText variant="caption">Edit</AppText>
                   </View>
                 </Pressable>
                 <Pressable
                   accessibilityLabel="Delete photo"
-                  className="rounded-full bg-canvas px-3 py-2"
                   onPress={() => void confirmDelete(item.id)}
+                  style={styles.action}
                 >
-                  <View className="flex-row items-center gap-2">
-                    <Trash2 color="#b55151" size={18} strokeWidth={2.2} />
+                  <View style={styles.actionRow}>
+                    <Trash2 color={theme.colors.danger} size={18} strokeWidth={2.2} />
                     <AppText tone="danger" variant="caption">
                       Delete
                     </AppText>
@@ -200,6 +204,7 @@ export default function ProfileScreen() {
         </View>
       )}
       showsVerticalScrollIndicator={false}
+      style={styles.list}
     />
   );
 }

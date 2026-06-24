@@ -1,10 +1,11 @@
 {
   "expo": {
-    "name": "photos-app",
-    "slug": "photos-app",
+    "name": "PicXplorer",
+    "slug": "picxplorer",
     "version": "1.0.0",
-    "scheme": "photosapp",
+    "scheme": "picxplorer",
     "orientation": "portrait",
+    "platforms": ["ios", "android"],
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "plugins": [
@@ -36,7 +37,7 @@
         "NSPhotoLibraryAddUsageDescription": "Save captured photos to your library.",
         "NSPhotoLibraryUsageDescription": "Allow access when you choose to save or share photos."
       },
-      "bundleIdentifier": "com.coderwin.photos-app"
+      "bundleIdentifier": "com.coderwin.picxplorer"
     },
     "android": {
       "adaptiveIcon": {
@@ -47,11 +48,7 @@
         "CAMERA",
         "READ_MEDIA_IMAGES"
       ],
-      "package": "com.coderwin.photosapp"
-    },
-    "web": {
-      "bundler": "metro",
-      "favicon": "./assets/favicon.png"
+      "package": "com.coderwin.picxplorer"
     }
   }
 }

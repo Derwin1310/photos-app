@@ -1,12 +1,12 @@
-# PhotoSearch
+# PicXplorer
 
-PhotoSearch is an Expo SDK 54 app for discovering photos, browsing themed collections, and saving camera captures locally.
+PicXplorer is an Expo SDK 54 app for discovering photos, browsing themed collections, and saving camera captures locally.
 
 ## Stack
 
 - Expo Router for file-based navigation
 - TypeScript in strict mode
-- NativeWind v4 with semantic theme tokens
+- React Native Unistyles v3 with typed light-theme tokens
 - React Query for feed and search data
 - Expo Camera, Media Library, Sharing, Image, and Splash Screen
 - Oxlint for linting
@@ -36,7 +36,7 @@ src/
   features/
   lib/
   providers/
-  global.css
+  theme/
 ```
 
 ## Environment
@@ -54,7 +54,6 @@ EXPO_PUBLIC_UNSPLASH_ACCESS_KEY=your_unsplash_access_key_here
 ```bash
 pnpm install
 pnpm start
-pnpm exec expo prebuild
 pnpm ios
 pnpm android
 pnpm typecheck
@@ -65,6 +64,9 @@ pnpm check
 This project uses Expo Continuous Native Generation (CNG): `app.json` is the
 source of truth, and `ios/` and `android/` are generated locally when a native
 build is needed.
+
+Unistyles v3 uses native modules, so use a development client rather than Expo
+Go. `pnpm start` runs Metro with the dev-client target.
 
 ## TestFlight
 
@@ -80,7 +82,7 @@ npx testflight
 Before the first submission:
 
 - Create the app in App Store Connect
-- Make sure the bundle identifier matches `com.coderwin.photos-app`
+- Make sure the bundle identifier matches `com.coderwin.picxplorer`
 - Ensure your Apple Developer credentials are available to EAS
 
 If credentials need attention:
@@ -89,19 +91,22 @@ If credentials need attention:
 eas credentials -p ios
 ```
 
-## NativeWind Setup
+## Styling
 
-This project uses the stable NativeWind v4 and Tailwind CSS v3 setup:
+This project uses Unistyles v3 with the current light palette registered in
+`src/theme/unistyles.ts`. Styles live beside the component that owns them:
 
-- `tailwind.config.js`
-- `metro.config.js`
-- `babel.config.js`
-- `src/global.css`
-- `nativewind-env.d.ts`
+```text
+feed-card.tsx
+feed-card.styles.ts
+```
+
+Each stylesheet imports `StyleSheet` directly from `react-native-unistyles`.
+Do not spread Unistyles styles or re-export `StyleSheet` through a barrel.
 
 ## Notes
 
 - Camera permission is requested in the camera route.
 - Media library permission is requested only when saving a captured image.
 - Gallery data is stored locally and migrated from the legacy `galleryList` payload if present.
-- Expo Go should be the first validation target; create a custom build only if a native limitation requires it.
+- Build and install a development client after native dependency changes, then run `pnpm start`.

@@ -1,35 +1,32 @@
-import { useWindowDimensions, View } from "react-native";
+import { View } from "react-native";
 import { router } from "expo-router";
 import { Image } from "expo-image";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { withUnistyles } from "react-native-unistyles";
 import { images } from "@/assets/images";
 import { AppText } from "@/lib/components/app-text";
 import { IconButton } from "@/lib/components/icon-button";
 import { Camera } from "lucide-react-native";
+import { styles } from "./welcome-screen.styles";
+
+const StyledImage = withUnistyles(Image);
 
 export default function WelcomeScreen() {
-  const { width } = useWindowDimensions();
-  const cardWidth = Math.min(width - 32, 460);
-
   return (
-    <View className="flex-1 bg-black">
-      <Image className="absolute inset-0" contentFit="cover" source={images.homeBackground} />
-      <SafeAreaView className="flex-1 justify-end px-4 pb-4">
-        <View
-          className="self-center gap-5 rounded-[36px] bg-black/60 px-6 py-8"
-          style={{ width: cardWidth }}
-        >
-          <View className="flex-row items-center gap-3">
-            <View className="h-12 w-12 overflow-hidden rounded-full">
-              <Image className="h-full w-full" contentFit="cover" source={images.logo} />
+    <View style={styles.root}>
+      <StyledImage contentFit="cover" source={images.homeBackground} style={styles.background} />
+      <View style={styles.content}>
+        <View style={styles.card}>
+          <View style={styles.titleRow}>
+            <View style={styles.icon}>
+              <StyledImage contentFit="cover" source={images.logo} style={styles.iconImage} />
             </View>
             <AppText tone="inverse" variant="headline">
-              PhotoSearch
+              PicXplorer
             </AppText>
           </View>
 
-          <View className="gap-3">
-            <AppText className="max-w-sm" tone="inverse" variant="title">
+          <View style={styles.copy}>
+            <AppText style={styles.title} tone="inverse" variant="title">
               Discover local photographers and keep your own visual journal.
             </AppText>
             <AppText tone="inverse">
@@ -40,15 +37,14 @@ export default function WelcomeScreen() {
           </View>
 
           <IconButton
-            className="self-start bg-white px-5 py-3"
             icon={Camera}
             label="Start exploring"
             onPress={() => router.push("/feed")}
             showLabel
-            textClassName="text-ink"
+            style={styles.primaryButton}
           />
         </View>
-      </SafeAreaView>
+      </View>
     </View>
   );
 }

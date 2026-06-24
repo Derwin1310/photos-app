@@ -1,14 +1,14 @@
-import { Pressable, type PressableProps } from "react-native";
+import { Pressable, type PressableProps, type TextProps, type ViewStyle } from "react-native";
 import type { LucideIcon } from "lucide-react-native";
 import { AppIcon } from "@/lib/components/app-icon";
 import { AppText } from "@/lib/components/app-text";
-import { cn } from "@/lib/utils/cn";
+import { styles } from "./icon-button.styles";
 
-type IconButtonProps = PressableProps & {
+type IconButtonProps = Omit<PressableProps, "style"> & {
   icon: LucideIcon;
   label: string;
-  className?: string;
-  textClassName?: string;
+  style?: PressableProps["style"];
+  textStyle?: TextProps["style"];
   iconColor?: string;
   size?: number;
   showLabel?: boolean;
@@ -17,8 +17,8 @@ type IconButtonProps = PressableProps & {
 export function IconButton({
   icon,
   label,
-  className,
-  textClassName,
+  style,
+  textStyle,
   iconColor,
   size = 22,
   showLabel = false,
@@ -29,16 +29,16 @@ export function IconButton({
       accessibilityLabel={label}
       accessibilityRole="button"
       hitSlop={10}
-      className={cn(
-        "flex-row items-center justify-center rounded-full bg-surface/90 px-3 py-2",
-        className,
-      )}
-      style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
+      style={(state) => [
+        styles.button,
+        typeof style === "function" ? style(state) : style,
+        state.pressed && styles.pressed,
+      ] as ViewStyle[]}
       {...props}
     >
       <AppIcon color={iconColor} icon={icon} size={size} />
       {showLabel ? (
-        <AppText className={cn("ml-2", textClassName)} variant="body">
+        <AppText style={[styles.label, textStyle]} variant="body">
           {label}
         </AppText>
       ) : null}

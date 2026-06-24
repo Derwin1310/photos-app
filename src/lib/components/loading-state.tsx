@@ -1,5 +1,7 @@
 import { ActivityIndicator, View } from "react-native";
 import { AppText } from "@/lib/components/app-text";
+import { useUnistyles } from "react-native-unistyles";
+import { styles } from "./loading-state.styles";
 
 type LoadingStateProps = {
   message?: string;
@@ -8,9 +10,11 @@ type LoadingStateProps = {
 export function LoadingState({
   message = "Loading fresh photos...",
 }: LoadingStateProps) {
+  const { theme } = useUnistyles();
+
   return (
-    <View className="items-center justify-center gap-3 rounded-[28px] bg-surface/80 px-6 py-8">
-      <ActivityIndicator color="#ab7e57" size="large" />
+    <View style={styles.card}>
+      <ActivityIndicator color={theme.colors.accent} size="large" />
       <AppText center tone="muted">
         {message}
       </AppText>

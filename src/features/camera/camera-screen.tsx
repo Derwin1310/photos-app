@@ -6,11 +6,15 @@ import * as Haptics from "expo-haptics";
 import { router, useFocusEffect } from "expo-router";
 import { Circle, Flashlight, FlashlightOff, RotateCcw, Trash2, Type } from "lucide-react-native";
 import { useRef } from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import { IconButton } from "@/lib/components/icon-button";
 import { AppText } from "@/lib/components/app-text";
 import { ErrorState } from "@/lib/components/error-state";
 import { useGallery } from "@/features/gallery/gallery-provider";
+import { styles } from "./camera-screen.styles";
+
+const StyledCameraView = withUnistyles(CameraView);
+const StyledImage = withUnistyles(Image);
 
 export default function CameraScreen() {
   const [isCapturing, setIsCapturing] = useState(false);
@@ -19,7 +23,7 @@ export default function CameraScreen() {
   const [screenFocused, setScreenFocused] = useState(true);
   const [torchEnabled, setTorchEnabled] = useState(false);
   const cameraRef = useRef<CameraView>(null);
-  const { bottom, top } = useSafeAreaInsets();
+  const { theme } = useUnistyles();
   const { clearDraftPhoto, createDraftPhoto, draftPhoto } = useGallery();
 
   useFocusEffect(() => {
@@ -69,7 +73,7 @@ export default function CameraScreen() {
 
   if (!permission) {
     return (
-      <View className="flex-1 items-center justify-center bg-black px-6">
+      <View style={styles.checking}>
         <AppText center tone="inverse">
           Checking camera access...
         </AppText>
@@ -79,7 +83,7 @@ export default function CameraScreen() {
 
   if (!permission.granted) {
     return (
-      <View className="flex-1 justify-center bg-canvas px-5">
+      <View style={styles.permission}>
         <ErrorState
           actionLabel="Grant camera access"
           message="Camera access lets you capture a photo and save it into your local gallery."
@@ -90,21 +94,18 @@ export default function CameraScreen() {
   }
 
   return (
-    <View className="flex-1 bg-black">
+    <View style={styles.root}>
       {draftPhoto ? (
-        <View className="flex-1">
-          <Image
-            className="absolute inset-0"
+        <View style={styles.draftRoot}>
+          <StyledImage
             contentFit="cover"
             source={{ uri: draftPhoto.uri }}
+            style={styles.draftImage}
           />
 
-          <View
-            className="flex-1 justify-between px-5 pb-6"
-            style={{ paddingTop: top + 20, paddingBottom: bottom + 16 }}
-          >
-            <View className="items-end gap-3">
-              <View className="max-w-[250px] rounded-[24px] bg-black/60 px-4 py-3">
+          <View style={styles.draftOverlay}>
+            <View>
+              <View style={styles.message}>
                 <AppText center tone="inverse" variant="caption">
                   Continue to the caption sheet to name this moment and save it to
                   your gallery.
@@ -112,21 +113,20 @@ export default function CameraScreen() {
               </View>
             </View>
 
-            <View className="gap-4">
-              <View className="flex-row items-center justify-between gap-3">
+            <View style={styles.draftActions}>
+              <View style={styles.draftRow}>
                 <IconButton
-                  className="flex-1 bg-black/60 py-3"
                   icon={Trash2}
-                  iconColor="#ffffff"
+                  iconColor={theme.colors.inverse}
                   label="Discard photo"
                   onPress={discardPhoto}
                   showLabel
-                  textClassName="text-white"
+                  style={styles.transparentButton}
+                  textStyle={styles.inverseText}
                 />
                 <IconButton
-                  className="flex-1 bg-white py-3"
                   icon={Type}
-                  iconColor="#3a3636"
+                  iconColor={theme.colors.ink}
                   label="Add caption"
                   onPress={() =>
                     router.push({
@@ -135,7 +135,7 @@ export default function CameraScreen() {
                     })
                   }
                   showLabel
-                  textClassName="text-ink"
+                  style={styles.lightButton}
                 />
               </View>
             </View>
@@ -143,57 +143,54 @@ export default function CameraScreen() {
         </View>
       ) : (
         <>
-          <CameraView
+          <StyledCameraView
             ref={cameraRef}
             active={screenFocused && !draftPhoto}
-            className="flex-1"
             enableTorch={torchEnabled}
             facing={facing}
             mirror={facing === "front"}
+            style={styles.camera}
           />
 
-          <View
-            className="absolute inset-x-0 justify-between px-5"
-            style={{ bottom: bottom + 18, top: top + 18 }}
-          >
-            <View className="items-start">
+          <View style={styles.cameraOverlay}>
+            <View style={styles.topControl}>
               <IconButton
-                className="bg-black/55"
                 icon={torchEnabled ? Flashlight : FlashlightOff}
-                iconColor="#ffffff"
+                iconColor={theme.colors.inverse}
                 label={torchEnabled ? "Torch on" : "Torch off"}
                 onPress={() => setTorchEnabled((value) => !value)}
+                style={styles.transparentButton}
               />
             </View>
 
-            <View className="items-center gap-5">
-              <AppText center className="max-w-xs" tone="inverse">
+            <View style={styles.tutorial}>
+              <AppText center style={styles.tutorialText} tone="inverse">
                 Capture a moment, then add a caption before saving it to your
                 journal.
               </AppText>
 
-              <View className="flex-row items-center justify-center gap-6">
+              <View style={styles.captureRow}>
                 <IconButton
-                  className="bg-black/55"
                   icon={RotateCcw}
-                  iconColor="#ffffff"
+                  iconColor={theme.colors.inverse}
                   label="Flip camera"
                   onPress={() =>
                     setFacing((value) => (value === "back" ? "front" : "back"))
                   }
+                  style={styles.transparentButton}
                 />
                 <Pressable
                   accessibilityLabel="Capture photo"
                   accessibilityRole="button"
                   accessibilityState={{ disabled: isCapturing }}
-                  className="items-center justify-center rounded-full border-4 border-white bg-white/20 p-4"
                   disabled={isCapturing}
                   hitSlop={10}
                   onPress={() => void capturePhoto()}
+                  style={styles.shutter}
                 >
-                  <Circle color="#ffffff" fill="#ffffff" size={54} strokeWidth={1.8} />
+                  <Circle color={theme.colors.inverse} fill={theme.colors.inverse} size={54} strokeWidth={1.8} />
                 </Pressable>
-                <View className="w-[52px]" />
+                <View style={styles.spacer} />
               </View>
             </View>
           </View>

@@ -4,6 +4,7 @@ import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { Pressable, View } from "react-native";
 import { Image } from "expo-image";
 import { ChevronLeft } from "lucide-react-native";
+import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import { useSearchPhotosQuery } from "@/features/search/hooks/use-search-photos-query";
 import { AppText } from "@/lib/components/app-text";
 import { EmptyState } from "@/lib/components/empty-state";
@@ -11,18 +12,23 @@ import { ErrorState } from "@/lib/components/error-state";
 import { LoadingState } from "@/lib/components/loading-state";
 import { formatCompactNumber } from "@/lib/utils/format";
 import { getErrorMessage } from "@/lib/utils/errors";
+import { styles } from "./search-results-screen.styles";
+
+const StyledImage = withUnistyles(Image);
 
 // ponytail: native back is unreliable after repeated collection routes; dismissTo always returns to Feed.
 function BackToFeedButton() {
+  const { theme } = useUnistyles();
+
   return (
     <Link asChild dismissTo href="/feed">
       <Pressable
         accessibilityLabel="Back to feed"
         accessibilityRole="button"
-        className="items-center justify-center rounded-full p-2"
         hitSlop={10}
+        style={styles.backButton}
       >
-        <ChevronLeft color="#3a3636" size={26} strokeWidth={2.4} />
+        <ChevronLeft color={theme.colors.ink} size={26} strokeWidth={2.4} />
       </Pressable>
     </Link>
   );
@@ -48,7 +54,7 @@ export default function SearchResultsScreen() {
   const normalizedTitle = deferredQuery.trim() || "Search";
 
   return (
-    <View className="flex-1 bg-canvas">
+    <View style={styles.root}>
       <Stack.Screen
         options={{
           title: normalizedTitle,
@@ -59,8 +65,8 @@ export default function SearchResultsScreen() {
 
       <FlashList
         ListHeaderComponent={
-          <View className="gap-2 px-5 pb-5 pt-6">
-            <AppText variant="headline" className="capitalize">
+          <View style={styles.header}>
+            <AppText style={styles.title} variant="headline">
               {normalizedTitle}
             </AppText>
             <AppText tone="muted">
@@ -70,9 +76,8 @@ export default function SearchResultsScreen() {
             </AppText>
           </View>
         }
-        className="flex-1"
         contentInsetAdjustmentBehavior="automatic"
-        contentContainerClassName="px-5 pb-10"
+        contentContainerStyle={styles.content}
         data={photos}
         keyExtractor={(item) => item.id}
         ListEmptyComponent={
@@ -91,7 +96,7 @@ export default function SearchResultsScreen() {
           isFetchingNextPage ? (
             <LoadingState message="Loading more results..." />
           ) : !hasNextPage && photos.length > 0 ? (
-            <View className="items-center py-4">
+            <View style={styles.footer}>
               <AppText tone="muted">You made it to the end of the results.</AppText>
             </View>
           ) : null
@@ -106,13 +111,13 @@ export default function SearchResultsScreen() {
         }}
         onEndReachedThreshold={0.65}
         renderItem={({ item }) => (
-          <View className="flex-1 px-1.5 pb-3">
-            <View className="overflow-hidden rounded-[22px] bg-surface">
-              <Image
-                className="aspect-[3/4] w-full"
+          <View style={styles.gridItem}>
+            <View style={styles.gridSurface}>
+              <StyledImage
                 contentFit="cover"
                 recyclingKey={item.id}
                 source={{ uri: item.thumbUrl }}
+                style={styles.gridImage}
                 transition={180}
               />
             </View>
