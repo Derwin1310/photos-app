@@ -4,9 +4,10 @@ export const styles = StyleSheet.create((theme) => ({
   actions: { flexDirection: "row", flexWrap: "wrap", gap: theme.space.xs },
   card: {
     backgroundColor: theme.colors.surfaceRaised,
+    borderColor: theme.colors.border,
     borderCurve: "continuous",
     borderRadius: theme.radius.lg,
-    boxShadow: theme.shadow.card,
+    borderWidth: theme.border.default,
     gap: theme.space.md,
     padding: theme.space.md,
   },
@@ -25,9 +26,10 @@ export const styles = StyleSheet.create((theme) => ({
   photoRow: { flexDirection: "row", gap: theme.space.md },
   profileCard: {
     backgroundColor: theme.colors.surfaceBrand,
+    borderColor: theme.colors.border,
     borderCurve: "continuous",
     borderRadius: theme.radius.lg,
-    boxShadow: theme.shadow.card,
+    borderWidth: theme.border.default,
     gap: theme.space.lg,
     padding: theme.space.lg,
   },

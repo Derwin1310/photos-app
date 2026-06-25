@@ -6,12 +6,23 @@ import * as Haptics from "expo-haptics";
 import { router, useFocusEffect } from "expo-router";
 import { Circle, Flashlight, FlashlightOff, RotateCcw, Trash2, Type } from "lucide-react-native";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
+import Animated, {
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 import { IconButton } from "@/lib/components/icon-button";
 import { AppText } from "@/lib/components/app-text";
 import { ErrorState } from "@/lib/components/error-state";
 import { useGallery } from "@/features/gallery/gallery-provider";
+import { motion } from "@/lib/motion/motion";
+import { useEntranceAnimation } from "@/lib/motion/use-entrance-animation";
 import { styles } from "./camera-screen.styles";
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+const AnimatedView = Animated.View;
 const StyledCameraView = withUnistyles(CameraView);
 const StyledImage = withUnistyles(Image);
 
@@ -24,6 +35,12 @@ export default function CameraScreen() {
   const cameraRef = useRef<CameraView>(null);
   const { theme } = useUnistyles();
   const { clearDraftPhoto, createDraftPhoto, draftPhoto } = useGallery();
+  const reducedMotion = useReducedMotion();
+  const draftEntranceStyle = useEntranceAnimation({ distance: 10 });
+  const shutterScale = useSharedValue(1);
+  const shutterStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: shutterScale.value }],
+  }));
 
   useFocusEffect(() => {
     setScreenFocused(true);
@@ -39,6 +56,16 @@ export default function CameraScreen() {
     }
 
     setIsCapturing(true);
+    shutterScale.value = withSequence(
+      withTiming(reducedMotion ? 1 : 0.92, {
+        duration: motion.duration.fast,
+        easing: motion.easing.quick,
+      }),
+      withTiming(1, {
+        duration: motion.duration.standard,
+        easing: motion.easing.out,
+      }),
+    );
 
     try {
       const photo = await cameraRef.current.takePictureAsync({ quality: 0.85 });
@@ -95,7 +122,7 @@ export default function CameraScreen() {
   return (
     <View style={styles.root}>
       {draftPhoto ? (
-        <View style={styles.draftRoot}>
+        <AnimatedView style={[styles.draftRoot, draftEntranceStyle]}>
           <StyledImage
             contentFit="cover"
             source={{ uri: draftPhoto.uri }}
@@ -136,7 +163,7 @@ export default function CameraScreen() {
               </View>
             </View>
           </View>
-        </View>
+        </AnimatedView>
       ) : (
         <>
           <StyledCameraView
@@ -173,17 +200,17 @@ export default function CameraScreen() {
                   }
                   variant="overlay"
                 />
-                <Pressable
+                <AnimatedPressable
                   accessibilityLabel="Capture photo"
                   accessibilityRole="button"
                   accessibilityState={{ disabled: isCapturing }}
                   disabled={isCapturing}
                   hitSlop={10}
                   onPress={() => void capturePhoto()}
-                  style={styles.shutter}
+                  style={[styles.shutter, shutterStyle]}
                 >
                   <Circle color={theme.colors.accentSecondary} fill={theme.colors.accentSecondary} size={theme.size.shutterIcon} strokeWidth={1.8} />
-                </Pressable>
+                </AnimatedPressable>
                 <View style={styles.spacer} />
               </View>
             </View>

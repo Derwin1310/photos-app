@@ -33,4 +33,13 @@ export const styles = StyleSheet.create((theme) => ({
   },
   root: { backgroundColor: theme.colors.background, flex: 1 },
   section: { gap: theme.space.sm },
+  savedNotice: {
+    backgroundColor: theme.colors.successSoft,
+    borderColor: theme.colors.success,
+    borderCurve: "continuous",
+    borderRadius: theme.radius.md,
+    borderWidth: theme.border.default,
+    padding: theme.space.sm,
+  },
+  savedNoticeText: { color: theme.colors.onSuccessSoft },
 }));

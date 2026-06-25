@@ -1,9 +1,18 @@
 import { Pressable, type PressableProps, type ViewStyle } from "react-native";
 import type { LucideIcon } from "lucide-react-native";
 import { useUnistyles } from "react-native-unistyles";
+import Animated, {
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { AppIcon } from "@/lib/components/app-icon";
 import { AppText } from "@/lib/components/app-text";
+import { motion } from "@/lib/motion/motion";
 import { styles } from "./icon-button.styles";
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 type IconButtonProps = Omit<PressableProps, "style"> & {
   icon: LucideIcon;
@@ -16,27 +25,50 @@ type IconButtonProps = Omit<PressableProps, "style"> & {
 export function IconButton({
   icon,
   label,
+  onPressIn,
+  onPressOut,
   size = "md",
   showLabel = false,
   variant = "surface",
   ...props
 }: IconButtonProps) {
   const { theme } = useUnistyles();
+  const reducedMotion = useReducedMotion();
+  const pressScale = useSharedValue(1);
   const iconColor =
     variant === "primary" || variant === "overlay"
       ? theme.colors.textInverse
       : theme.colors.text;
 
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: pressScale.value }],
+  }));
+
   return (
-    <Pressable
+    <AnimatedPressable
       accessibilityLabel={label}
       accessibilityRole="button"
       hitSlop={10}
+      {...props}
+      onPressIn={(event) => {
+        pressScale.value = withTiming(reducedMotion ? 1 : 0.96, {
+          duration: motion.duration.fast,
+          easing: motion.easing.quick,
+        });
+        onPressIn?.(event);
+      }}
+      onPressOut={(event) => {
+        pressScale.value = withTiming(1, {
+          duration: motion.duration.fast,
+          easing: motion.easing.out,
+        });
+        onPressOut?.(event);
+      }}
       style={(state) => [
         styles.button(variant, size, showLabel),
         state.pressed && styles.pressed,
+        animatedStyle,
       ] as ViewStyle[]}
-      {...props}
     >
       <AppIcon color={iconColor} icon={icon} size={size === "md" ? 20 : 18} />
       {showLabel ? (
@@ -44,6 +76,6 @@ export function IconButton({
           {label}
         </AppText>
       ) : null}
-    </Pressable>
+    </AnimatedPressable>
   );
 }

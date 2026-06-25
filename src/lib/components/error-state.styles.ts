@@ -2,10 +2,11 @@ import { StyleSheet } from "react-native-unistyles";
 
 export const styles = StyleSheet.create((theme) => ({
   card: {
-    backgroundColor: theme.colors.surfaceRaised,
+    backgroundColor: theme.colors.surfaceSubtle,
+    borderColor: theme.colors.border,
     borderCurve: "continuous",
-    borderRadius: theme.radius.lg,
-    boxShadow: theme.shadow.card,
+    borderRadius: theme.radius.md,
+    borderWidth: theme.border.default,
     gap: theme.space.md,
     padding: theme.space.xl,
   },

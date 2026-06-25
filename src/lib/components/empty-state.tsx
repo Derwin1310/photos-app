@@ -1,6 +1,10 @@
 import { View } from "react-native";
+import Animated from "react-native-reanimated";
 import { AppText } from "@/lib/components/app-text";
+import { useEntranceAnimation } from "@/lib/motion/use-entrance-animation";
 import { styles } from "./empty-state.styles";
+
+const AnimatedView = Animated.createAnimatedComponent(View);
 
 type EmptyStateProps = {
   title: string;
@@ -8,10 +12,12 @@ type EmptyStateProps = {
 };
 
 export function EmptyState({ title, message }: EmptyStateProps) {
+  const entranceStyle = useEntranceAnimation({ distance: 8 });
+
   return (
-    <View style={styles.card}>
+    <AnimatedView style={[styles.card, entranceStyle]}>
       <AppText variant="headline">{title}</AppText>
       <AppText tone="muted">{message}</AppText>
-    </View>
+    </AnimatedView>
   );
 }

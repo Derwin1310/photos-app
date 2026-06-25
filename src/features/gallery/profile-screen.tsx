@@ -5,93 +5,100 @@ import { Image } from "expo-image";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import * as Haptics from "expo-haptics";
 import * as Sharing from "expo-sharing";
-import { Camera, Heart, Pencil, Share2, Trash2, Users } from "lucide-react-native";
+import { Camera, MessageCircle, Pencil, Share2, Trash2 } from "lucide-react-native";
+import Animated from "react-native-reanimated";
 import { images } from "@/assets/images";
 import { useGallery } from "@/features/gallery/gallery-provider";
 import { AppText } from "@/lib/components/app-text";
 import { AppButton } from "@/lib/components/app-button";
 import { EmptyState } from "@/lib/components/empty-state";
 import { ErrorState } from "@/lib/components/error-state";
+import { LoadingState } from "@/lib/components/loading-state";
 import { SectionHeader } from "@/lib/components/section-header";
+import { useEntranceAnimation } from "@/lib/motion/use-entrance-animation";
 import type { GalleryPhoto } from "@/lib/types/gallery";
 import { formatCompactNumber, formatGalleryDate } from "@/lib/utils/format";
 import { styles } from "./profile-screen.styles";
 
+const AnimatedView = Animated.View;
 const StyledImage = withUnistyles(Image);
 const StyledFlashList = withUnistyles(FlashList) as typeof FlashList;
 
 const profileStats = [
   { icon: Camera, label: "Photos" },
-  { icon: Heart, label: "Likes" },
-  { icon: Users, label: "Followers" },
+  { icon: MessageCircle, label: "Captions" },
+  { icon: Share2, label: "Shareable" },
 ] as const;
 
-export default function ProfileScreen() {
-  const { deletePhoto, error, hydrated, photos } = useGallery();
-  const { theme } = useUnistyles();
-
-  async function sharePhoto(uri: string) {
-    try {
-      const canShare = await Sharing.isAvailableAsync();
-
-      if (!canShare) {
-        Alert.alert("Sharing unavailable", "This device cannot share photos.");
-        return;
-      }
-
-      await Sharing.shareAsync(uri);
-    } catch (shareError) {
-      Alert.alert(
-        "Share failed",
-        shareError instanceof Error ? shareError.message : "Could not share that photo.",
-      );
-    }
-  }
-
-  async function confirmDelete(photoId: string) {
-    Alert.alert("Delete photo?", "This will remove it from your local gallery.", [
-      { style: "cancel", text: "Keep it" },
-      {
-        style: "destructive",
-        text: "Delete",
-        onPress: () => {
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(
-            () => undefined,
-          );
-          void deletePhoto(photoId);
-        },
-      },
-    ]);
-  }
-
-  const statValues = {
-    Followers: 128,
-    Likes: photos.length * 4,
-    Photos: photos.length,
-  } as const;
-
-  if (!hydrated) {
-    return (
-      <View style={styles.centered}>
-        <AppText center tone="muted">
-          Loading your gallery...
-        </AppText>
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.centered}>
-        <ErrorState message={error} />
-      </View>
-    );
-  }
+function GalleryPhotoCard({
+  confirmDelete,
+  index,
+  item,
+  sharePhoto,
+}: {
+  confirmDelete: (photo: GalleryPhoto) => void;
+  index: number;
+  item: GalleryPhoto;
+  sharePhoto: (uri: string) => void;
+}) {
+  const entranceStyle = useEntranceAnimation({
+    delay: Math.min(index, 6) * 34,
+    distance: 14,
+  });
 
   return (
-    <StyledFlashList<GalleryPhoto>
-      ListHeaderComponent={
-        <View style={styles.header}>
+    <AnimatedView style={[styles.card, entranceStyle]}>
+      <View style={styles.photoRow}>
+        <StyledImage
+          contentFit="cover"
+          source={{ uri: item.uri }}
+          style={styles.image}
+          transition={180}
+        />
+        <View style={styles.info}>
+          <View>
+            <AppText variant="title">
+              {item.caption || "Untitled memory"}
+            </AppText>
+            <AppText tone="muted" variant="bodySmall">
+              Updated {formatGalleryDate(item.updatedAt)}
+            </AppText>
+          </View>
+          <View style={styles.actions}>
+            <AppButton icon={Share2} label="Share" onPress={() => void sharePhoto(item.uri)} size="sm" variant="secondary" />
+            <AppButton
+              icon={Pencil}
+              label="Edit"
+              onPress={() =>
+                router.push({
+                  pathname: "/(modals)/edit-photo",
+                  params: { photoId: item.id },
+                })
+              }
+              size="sm"
+              variant="secondary"
+            />
+            <AppButton icon={Trash2} label="Delete" onPress={() => void confirmDelete(item)} size="sm" variant="destructive" />
+          </View>
+        </View>
+      </View>
+    </AnimatedView>
+  );
+}
+
+function GalleryListHeader(photos: GalleryPhoto[]) {
+  const { theme } = useUnistyles();
+
+  const statValues = {
+    Captions: photos.filter((photo) => photo.caption.trim().length > 0).length,
+    Photos: photos.length,
+    Shareable: photos.length,
+  } as const;
+
+  const headerEntranceStyle = useEntranceAnimation({ distance: 12 });
+
+  return (
+        <AnimatedView style={[styles.header, headerEntranceStyle]}>
           <View style={styles.profileCard}>
             <View style={styles.profileRow}>
               <StyledImage
@@ -103,7 +110,7 @@ export default function ProfileScreen() {
                 <AppText variant="headline">Lina Rios</AppText>
                 <AppText tone="muted">@lina_rios</AppText>
                 <AppText tone="muted" variant="bodySmall">
-                  Photo journaler collecting city moments one frame at a time.
+                  Photo journaler building a share-ready collection from saved captures.
                 </AppText>
               </View>
             </View>
@@ -137,11 +144,101 @@ export default function ProfileScreen() {
           </View>
 
           <SectionHeader
-            subtitle="Captures saved from the camera tab live here automatically."
-            title="My photos"
+            subtitle="Your camera saves, captions, and share-ready memories live here."
+            title="Saved captures"
           />
-        </View>
+        </AnimatedView>
+  )
+}
+
+export default function ProfileScreen() {
+  const { deletePhoto, error, hydrated, photos, restorePhoto } = useGallery();
+
+
+  async function sharePhoto(uri: string) {
+    try {
+      const canShare = await Sharing.isAvailableAsync();
+
+      if (!canShare) {
+        Alert.alert("Sharing unavailable", "This device cannot share photos.");
+        return;
       }
+
+      await Sharing.shareAsync(uri);
+    } catch (shareError) {
+      Alert.alert(
+        "Share failed",
+        shareError instanceof Error ? shareError.message : "Could not share that photo.",
+      );
+    }
+  }
+
+  const confirmDelete = async (photo: GalleryPhoto)  => {
+    Alert.alert("Delete photo?", "This will remove it from your local gallery.", [
+      { style: "cancel", text: "Keep it" },
+      {
+        style: "destructive",
+        text: "Delete",
+        onPress: async () => {
+          try {
+            await deletePhoto(photo.id);
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(
+              () => undefined,
+            );
+            Alert.alert("Photo deleted", "You can restore it if that was a mistake.", [
+              { style: "cancel", text: "Done" },
+              {
+                text: "Undo",
+                onPress: () => {
+                  restorePhoto(photo)
+                    .then(() =>
+                      Haptics.notificationAsync(
+                        Haptics.NotificationFeedbackType.Success,
+                      ),
+                    )
+                    .catch((restoreError) => {
+                      Alert.alert(
+                        "Restore failed",
+                        restoreError instanceof Error
+                          ? restoreError.message
+                          : "Could not restore that photo.",
+                      );
+                    });
+                },
+              },
+            ]);
+          } catch (deleteError) {
+            Alert.alert(
+              "Delete failed",
+              deleteError instanceof Error
+                ? deleteError.message
+                : "Could not delete that photo.",
+            );
+          }
+        },
+      },
+    ]);
+  }
+
+  if (!hydrated) {
+    return (
+      <View style={styles.centered}>
+        <LoadingState message="Loading your saved captures..." />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <ErrorState message={error} />
+      </View>
+    );
+  }
+
+  return (
+    <StyledFlashList<GalleryPhoto>
+      ListHeaderComponent={GalleryListHeader}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={styles.content}
       data={photos}
@@ -149,47 +246,17 @@ export default function ProfileScreen() {
       ListEmptyComponent={
         <EmptyState
           message="Capture something from the camera tab and it will show up here with edit, share, and delete actions."
-          title="Your gallery is empty"
+          title="Your profile is waiting for its first capture"
         />
       }
       ItemSeparatorComponent={() => <View style={styles.separator} />}
-      renderItem={({ item }) => (
-        <View style={styles.card}>
-          <View style={styles.photoRow}>
-            <StyledImage
-              contentFit="cover"
-              source={{ uri: item.uri }}
-              style={styles.image}
-              transition={180}
-            />
-            <View style={styles.info}>
-              <View>
-                <AppText variant="title">
-                  {item.caption || "Untitled memory"}
-                </AppText>
-                <AppText tone="muted" variant="bodySmall">
-                  Updated {formatGalleryDate(item.updatedAt)}
-                </AppText>
-              </View>
-              <View style={styles.actions}>
-                <AppButton icon={Share2} label="Share" onPress={() => void sharePhoto(item.uri)} size="sm" variant="secondary" />
-                <AppButton
-                  icon={Pencil}
-                  label="Edit"
-                  onPress={() =>
-                    router.push({
-                      pathname: "/(modals)/edit-photo",
-                      params: { photoId: item.id },
-                    })
-                  }
-                  size="sm"
-                  variant="secondary"
-                />
-                <AppButton icon={Trash2} label="Delete" onPress={() => void confirmDelete(item.id)} size="sm" variant="destructive" />
-              </View>
-            </View>
-          </View>
-        </View>
+      renderItem={({ index, item }) => (
+        <GalleryPhotoCard
+          confirmDelete={(photo) => void confirmDelete(photo)}
+          index={index}
+          item={item}
+          sharePhoto={(uri) => void sharePhoto(uri)}
+        />
       )}
       showsVerticalScrollIndicator={false}
       style={styles.list}

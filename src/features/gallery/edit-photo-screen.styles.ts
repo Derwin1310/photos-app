@@ -4,9 +4,10 @@ export const styles = StyleSheet.create((theme) => ({
   actions: { flexDirection: "row", gap: theme.space.sm, justifyContent: "flex-end" },
   card: {
     backgroundColor: theme.colors.surfaceRaised,
+    borderColor: theme.colors.border,
     borderCurve: "continuous",
     borderRadius: theme.radius.lg,
-    boxShadow: theme.shadow.card,
+    borderWidth: theme.border.default,
     gap: theme.space.lg,
     padding: theme.space.lg,
   },
@@ -16,6 +17,7 @@ export const styles = StyleSheet.create((theme) => ({
     borderRadius: theme.radius.md,
     padding: theme.space.sm,
   },
+  errorText: { color: theme.colors.onDangerSoft },
   form: { gap: theme.space.xs },
   image: {
     aspectRatio: 16 / 10,
@@ -25,7 +27,9 @@ export const styles = StyleSheet.create((theme) => ({
     width: "100%",
   },
   input: {
-    backgroundColor: theme.colors.surfaceSubtle,
+    backgroundColor: theme.colors.inputBackground,
+    borderColor: theme.colors.inputBorder,
+    borderWidth: theme.border.default,
     borderCurve: "continuous",
     borderRadius: theme.radius.md,
     color: theme.colors.text,

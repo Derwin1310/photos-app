@@ -7,18 +7,32 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
+  Alert,
   TextInput,
   View,
 } from "react-native";
 import { Image } from "expo-image";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
+import Animated from "react-native-reanimated";
 import { useGallery } from "@/features/gallery/gallery-provider";
 import { AppText } from "@/lib/components/app-text";
 import { AppButton } from "@/lib/components/app-button";
 import { ErrorState } from "@/lib/components/error-state";
+import { useEntranceAnimation } from "@/lib/motion/use-entrance-animation";
 import { styles } from "./edit-photo-screen.styles";
 
+const AnimatedView = Animated.View;
 const StyledImage = withUnistyles(Image);
+
+function InlineError({ message }: { message: string }) {
+  const entranceStyle = useEntranceAnimation({ distance: 6 });
+
+  return (
+    <AnimatedView style={[styles.error, entranceStyle]}>
+      <AppText style={styles.errorText}>{message}</AppText>
+    </AnimatedView>
+  );
+}
 
 export default function EditPhotoScreen() {
   const params = useLocalSearchParams<{ mode?: string; photoId?: string }>();
@@ -37,12 +51,13 @@ export default function EditPhotoScreen() {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { theme } = useUnistyles();
+  const cardEntranceStyle = useEntranceAnimation({ distance: 12 });
 
   useEffect(() => {
     setCaption(sourcePhoto?.caption ?? "");
   }, [sourcePhoto?.caption]);
 
-  function handleCaptionChange(nextCaption: string) {
+  const handleCaptionChange = (nextCaption: string) => {
     setCaption(nextCaption);
 
     if (isDraftMode) {
@@ -64,7 +79,7 @@ export default function EditPhotoScreen() {
     );
   }
 
-  async function saveChanges() {
+  const saveChanges = async () => {
     if (!sourcePhoto) {
       return;
     }
@@ -78,7 +93,9 @@ export default function EditPhotoScreen() {
         const mediaPermission = await MediaLibrary.requestPermissionsAsync();
 
         if (!mediaPermission.granted) {
-          throw new Error("Media library permission is required to save photos.");
+          throw new Error(
+            "Allow photo library access to save this capture to your device and PicXplorer profile.",
+          );
         }
 
         await MediaLibrary.Asset.create(sourcePhoto.uri);
@@ -93,9 +110,18 @@ export default function EditPhotoScreen() {
         }
 
         await updatePhoto(photo.id, caption);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
+          () => undefined,
+        );
       }
 
-      router.back();
+      Alert.alert(
+        isDraftMode ? "Saved to profile" : "Caption updated",
+        isDraftMode
+          ? "Your capture is ready in your profile."
+          : "Your updated caption is saved.",
+        [{ text: "Done", onPress: () => router.back() }],
+      );
     } catch (updateError) {
       setError(
         updateError instanceof Error
@@ -119,7 +145,7 @@ export default function EditPhotoScreen() {
         onPress={Keyboard.dismiss}
         style={styles.screen}
       >
-        <View style={styles.card}>
+        <AnimatedView style={[styles.card, cardEntranceStyle]}>
           <StyledImage
             contentFit="cover"
             source={{ uri: sourcePhoto.uri }}
@@ -138,7 +164,7 @@ export default function EditPhotoScreen() {
                   ? "Tell the story behind this moment"
                   : "Write a new caption"
               }
-              placeholderTextColor={theme.colors.textTertiary}
+              placeholderTextColor={theme.colors.placeholder}
               style={styles.input}
               textAlignVertical="top"
               value={caption}
@@ -149,9 +175,7 @@ export default function EditPhotoScreen() {
           </View>
 
           {error ? (
-            <View style={styles.error}>
-              <AppText tone="inverse">{error}</AppText>
-            </View>
+            <InlineError message={error} />
           ) : null}
 
           <View style={styles.actions}>
@@ -166,11 +190,11 @@ export default function EditPhotoScreen() {
             <AppButton
               label={isSaving ? "Saving..." : isDraftMode ? "Save photo" : "Save"}
               disabled={isSaving}
-              onPress={() => void saveChanges()}
+              onPress={saveChanges}
               variant="primary"
             />
           </View>
-        </View>
+        </AnimatedView>
       </Pressable>
     </KeyboardAvoidingView>
   );

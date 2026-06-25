@@ -26,18 +26,18 @@ export const styles = StyleSheet.create((theme, rt) => ({
   root: { backgroundColor: theme.colors.background, flex: 1 },
   title: { maxWidth: 384 },
   startExploringButton: {
-    flexDirection: "row",
-    gap: theme.space.xs,
-    backgroundColor: "#FCEFE5",
     alignItems: "center",
     alignSelf: "flex-start",
-    paddingHorizontal: theme.space.md,
-    minHeight: theme.size.touch,
+    backgroundColor: "#FCEFE5",
     borderRadius: theme.radius.md,
+    flexDirection: "row",
+    gap: theme.space.xs,
+    minHeight: theme.size.touch,
+    paddingHorizontal: theme.space.md,
   },
   textButton: {
     color: "#3D2D24",
     fontSize: theme.typography.title.fontSize,
     fontWeight: "600",
-  }
+  },
 }));

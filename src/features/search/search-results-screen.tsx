@@ -5,20 +5,23 @@ import { Pressable, View } from "react-native";
 import { Image } from "expo-image";
 import { ChevronLeft } from "lucide-react-native";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
+import Animated from "react-native-reanimated";
 import { useSearchPhotosQuery } from "@/features/search/hooks/use-search-photos-query";
 import { AppText } from "@/lib/components/app-text";
 import { EmptyState } from "@/lib/components/empty-state";
 import { ErrorState } from "@/lib/components/error-state";
 import { LoadingState } from "@/lib/components/loading-state";
 import { SectionHeader } from "@/lib/components/section-header";
+import { useEntranceAnimation } from "@/lib/motion/use-entrance-animation";
+import type { UnsplashPhoto } from "@/lib/types/photos";
 import { formatCompactNumber } from "@/lib/utils/format";
 import { getErrorMessage } from "@/lib/utils/errors";
 import { styles } from "./search-results-screen.styles";
 
+const AnimatedView = Animated.View;
 const StyledImage = withUnistyles(Image);
 const StyledFlashList = withUnistyles(FlashList) as typeof FlashList;
 
-// ponytail: native back is unreliable after repeated collection routes; dismissTo always returns to Feed.
 function BackToFeedButton() {
   const { theme } = useUnistyles();
 
@@ -33,6 +36,27 @@ function BackToFeedButton() {
         <ChevronLeft color={theme.colors.text} size={theme.size.iconLg} strokeWidth={2.4} />
       </Pressable>
     </Link>
+  );
+}
+
+function SearchGridItem({ index, photo }: { index: number; photo: UnsplashPhoto }) {
+  const entranceStyle = useEntranceAnimation({
+    delay: Math.min(index % 12, 8) * 24,
+    distance: 12,
+  });
+
+  return (
+    <AnimatedView style={[styles.gridItem, entranceStyle]}>
+      <View style={styles.gridSurface}>
+        <StyledImage
+          contentFit="cover"
+          recyclingKey={photo.id}
+          source={{ uri: photo.thumbUrl }}
+          style={styles.gridImage}
+          transition={180}
+        />
+      </View>
+    </AnimatedView>
   );
 }
 
@@ -112,19 +136,7 @@ export default function SearchResultsScreen() {
           void fetchNextPage();
         }}
         onEndReachedThreshold={0.65}
-        renderItem={({ item }) => (
-          <View style={styles.gridItem}>
-            <View style={styles.gridSurface}>
-              <StyledImage
-                contentFit="cover"
-                recyclingKey={item.id}
-                source={{ uri: item.thumbUrl }}
-                style={styles.gridImage}
-                transition={180}
-              />
-            </View>
-          </View>
-        )}
+        renderItem={({ index, item }) => <SearchGridItem index={index} photo={item} />}
         showsVerticalScrollIndicator={false}
       />
     </View>

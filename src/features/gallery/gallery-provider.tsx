@@ -25,6 +25,7 @@ type GalleryContextValue = {
   addPhoto: (uri: string, caption: string) => Promise<GalleryPhoto>;
   deletePhoto: (photoId: string) => Promise<void>;
   getPhoto: (photoId: string) => GalleryPhoto | undefined;
+  restorePhoto: (photo: GalleryPhoto) => Promise<void>;
   updateDraftCaption: (caption: string) => void;
   updatePhoto: (photoId: string, caption: string) => Promise<void>;
 };
@@ -149,6 +150,25 @@ export function GalleryProvider({ children }: PropsWithChildren) {
     }
   };
 
+  const restorePhoto = async (photo: GalleryPhoto) => {
+    const previousPhotos = photos;
+    const nextPhotos = [
+      photo,
+      ...previousPhotos.filter((currentPhoto) => currentPhoto.id !== photo.id),
+    ];
+
+    try {
+      await commitPhotos(nextPhotos, () => applyPhotos(previousPhotos), applyPhotos);
+    } catch (galleryError) {
+      setError(
+        galleryError instanceof Error
+          ? galleryError.message
+          : "Could not restore that photo.",
+      );
+      throw galleryError;
+    }
+  };
+
   const updatePhoto = async (photoId: string, caption: string) => {
     const previousPhotos = photos;
     const nextPhotos = previousPhotos.map((photo) =>
@@ -183,6 +203,7 @@ export function GalleryProvider({ children }: PropsWithChildren) {
     addPhoto,
     deletePhoto,
     getPhoto: (photoId) => photos.find((photo) => photo.id === photoId),
+    restorePhoto,
     updateDraftCaption,
     updatePhoto,
   };

@@ -6,8 +6,8 @@
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "lint": "oxlint --tsconfig tsconfig.json .",
-    "lint:fix": "oxlint --fix --tsconfig tsconfig.json .",
+    "lint": "oxlint --tsconfig tsconfig.json app src index.ts",
+    "lint:fix": "oxlint --fix --tsconfig tsconfig.json app src index.ts",
     "typecheck": "tsc --noEmit",
     "check": "pnpm typecheck && pnpm lint"
   },
