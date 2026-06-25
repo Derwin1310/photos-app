@@ -1,3 +1,4 @@
+import type React from "react";
 import type { ReactNode } from "react";
 import { Stack } from "expo-router";
 import { useUnistyles } from "react-native-unistyles";
@@ -8,7 +9,11 @@ type TabStackProps = {
   title: string;
 };
 
-export function TabStack({ headerRight, headerShown = true, title }: TabStackProps) {
+export const TabStack: React.FC<TabStackProps> = ({
+  headerRight,
+  headerShown = true,
+  title,
+}) => {
   const { theme } = useUnistyles();
 
   return (
@@ -28,4 +33,4 @@ export function TabStack({ headerRight, headerShown = true, title }: TabStackPro
       <Stack.Screen name="index" options={{ headerRight, headerShown, title }} />
     </Stack>
   );
-}
+};

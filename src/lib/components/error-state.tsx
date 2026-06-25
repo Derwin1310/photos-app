@@ -1,3 +1,4 @@
+import type React from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
 import { AppButton } from "@/lib/components/app-button";
@@ -13,11 +14,11 @@ type ErrorStateProps = {
   onRetry?: () => void;
 };
 
-export function ErrorState({
+export const ErrorState: React.FC<ErrorStateProps> = ({
   message,
   actionLabel = "Try again",
   onRetry,
-}: ErrorStateProps) {
+}) => {
   const entranceStyle = useEntranceAnimation({ distance: 8 });
 
   return (
@@ -31,4 +32,4 @@ export function ErrorState({
       ) : null}
     </AnimatedView>
   );
-}
+};

@@ -1,3 +1,4 @@
+import type React from "react";
 import { Text, type TextProps } from "react-native";
 import { styles } from "./app-text.styles";
 
@@ -17,17 +18,15 @@ type AppTextProps = TextProps & {
   center?: boolean;
 };
 
-export function AppText({
+export const AppText: React.FC<AppTextProps> = ({
   variant = "body",
   tone = "default",
   center = false,
   style,
   ...props
-}: AppTextProps) {
-  return (
-    <Text
-      {...props}
-      style={[styles[variant], styles[tone], center && styles.center, style]}
-    />
-  );
-}
+}) => (
+  <Text
+    {...props}
+    style={[styles[variant], styles[tone], center && styles.center, style]}
+  />
+);

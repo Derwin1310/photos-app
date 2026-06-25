@@ -1,10 +1,10 @@
+import type React from "react";
 import {
   createContext,
   startTransition,
   use,
   useEffect,
   useState,
-  type PropsWithChildren,
 } from "react";
 import { UnistylesRuntime, useUnistyles } from "react-native-unistyles";
 import {
@@ -22,7 +22,7 @@ type AppearanceContextValue = {
 
 const AppearanceContext = createContext<AppearanceContextValue | null>(null);
 
-function applyAppearancePreference(preference: AppearancePreference) {
+const applyAppearancePreference = (preference: AppearancePreference) => {
   if (preference === "system") {
     UnistylesRuntime.setAdaptiveThemes(true);
     return;
@@ -30,9 +30,11 @@ function applyAppearancePreference(preference: AppearancePreference) {
 
   UnistylesRuntime.setAdaptiveThemes(false);
   UnistylesRuntime.setTheme(preference);
-}
+};
 
-export function AppearanceProvider({ children }: PropsWithChildren) {
+type AppearanceProviderProps = React.PropsWithChildren;
+
+export const AppearanceProvider: React.FC<AppearanceProviderProps> = ({ children }) => {
   const [isHydrated, setIsHydrated] = useState(false);
   const [preference, setPreferenceState] = useState<AppearancePreference>("system");
   const { rt } = useUnistyles();
@@ -77,7 +79,7 @@ export function AppearanceProvider({ children }: PropsWithChildren) {
   };
 
   return <AppearanceContext value={value}>{children}</AppearanceContext>;
-}
+};
 
 export function useAppearance() {
   const value = use(AppearanceContext);

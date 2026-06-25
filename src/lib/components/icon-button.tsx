@@ -1,3 +1,4 @@
+import type React from "react";
 import { Pressable, type PressableProps, type ViewStyle } from "react-native";
 import type { LucideIcon } from "lucide-react-native";
 import { useUnistyles } from "react-native-unistyles";
@@ -22,7 +23,7 @@ type IconButtonProps = Omit<PressableProps, "style"> & {
   variant?: "ghost" | "overlay" | "primary" | "surface";
 };
 
-export function IconButton({
+export const IconButton: React.FC<IconButtonProps> = ({
   icon,
   label,
   onPressIn,
@@ -31,7 +32,7 @@ export function IconButton({
   showLabel = false,
   variant = "surface",
   ...props
-}: IconButtonProps) {
+}) => {
   const { theme } = useUnistyles();
   const reducedMotion = useReducedMotion();
   const pressScale = useSharedValue(1);
@@ -78,4 +79,4 @@ export function IconButton({
       ) : null}
     </AnimatedPressable>
   );
-}
+};

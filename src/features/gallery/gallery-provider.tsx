@@ -1,10 +1,10 @@
+import type React from "react";
 import {
   createContext,
   startTransition,
   use,
   useEffect,
   useState,
-  type PropsWithChildren,
 } from "react";
 import type { GalleryPhoto } from "@/lib/types/gallery";
 import {
@@ -32,11 +32,11 @@ type GalleryContextValue = {
 
 const GalleryContext = createContext<GalleryContextValue | null>(null);
 
-async function commitPhotos(
+const commitPhotos = async (
   nextPhotos: GalleryPhoto[],
   rollback: () => void,
   apply: (photos: GalleryPhoto[]) => void,
-) {
+) => {
   apply(nextPhotos);
 
   try {
@@ -45,9 +45,11 @@ async function commitPhotos(
     rollback();
     throw error;
   }
-}
+};
 
-export function GalleryProvider({ children }: PropsWithChildren) {
+type GalleryProviderProps = React.PropsWithChildren;
+
+export const GalleryProvider: React.FC<GalleryProviderProps> = ({ children }) => {
   const [draftPhoto, setDraftPhoto] = useState<DraftPhoto | null>(null);
   const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
   const [hydrated, setHydrated] = useState(false);
@@ -209,7 +211,7 @@ export function GalleryProvider({ children }: PropsWithChildren) {
   };
 
   return <GalleryContext value={value}>{children}</GalleryContext>;
-}
+};
 
 export function useGallery() {
   const value = use(GalleryContext);

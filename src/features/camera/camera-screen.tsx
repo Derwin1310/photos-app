@@ -1,3 +1,4 @@
+import type React from "react";
 import { useRef, useState } from "react";
 import { Alert, Pressable, View } from "react-native";
 import { CameraView, type CameraType, useCameraPermissions } from "expo-camera";
@@ -26,7 +27,7 @@ const AnimatedView = Animated.View;
 const StyledCameraView = withUnistyles(CameraView);
 const StyledImage = withUnistyles(Image);
 
-export default function CameraScreen() {
+const CameraScreen: React.FC = () => {
   const [isCapturing, setIsCapturing] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>("back");
@@ -50,7 +51,7 @@ export default function CameraScreen() {
     };
   });
 
-  async function capturePhoto() {
+  const capturePhoto = async () => {
     if (!cameraRef.current || isCapturing) {
       return;
     }
@@ -79,9 +80,9 @@ export default function CameraScreen() {
     } finally {
       setIsCapturing(false);
     }
-  }
+  };
 
-  function discardPhoto() {
+  const discardPhoto = () => {
     Alert.alert("Discard photo?", "This capture will be removed.", [
       { style: "cancel", text: "Keep editing" },
       {
@@ -95,7 +96,7 @@ export default function CameraScreen() {
         },
       },
     ]);
-  }
+  };
 
   if (!permission) {
     return (
@@ -219,4 +220,6 @@ export default function CameraScreen() {
       )}
     </View>
   );
-}
+};
+
+export default CameraScreen;

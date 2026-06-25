@@ -1,3 +1,4 @@
+import type React from "react";
 import { ActivityIndicator, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { AppText } from "@/lib/components/app-text";
@@ -11,9 +12,9 @@ type LoadingStateProps = {
   message?: string;
 };
 
-export function LoadingState({
+export const LoadingState: React.FC<LoadingStateProps> = ({
   message = "Loading fresh photos...",
-}: LoadingStateProps) {
+}) => {
   const { theme } = useUnistyles();
   const entranceStyle = useEntranceAnimation({ distance: 8 });
 
@@ -25,4 +26,4 @@ export function LoadingState({
       </AppText>
     </AnimatedView>
   );
-}
+};

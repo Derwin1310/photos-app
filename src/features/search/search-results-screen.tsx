@@ -1,3 +1,4 @@
+import type React from "react";
 import { FlashList } from "@shopify/flash-list";
 import { useDeferredValue } from "react";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
@@ -22,7 +23,7 @@ const AnimatedView = Animated.View;
 const StyledImage = withUnistyles(Image);
 const StyledFlashList = withUnistyles(FlashList) as typeof FlashList;
 
-function BackToFeedButton() {
+const BackToFeedButton: React.FC = () => {
   const { theme } = useUnistyles();
 
   return (
@@ -37,9 +38,14 @@ function BackToFeedButton() {
       </Pressable>
     </Link>
   );
-}
+};
 
-function SearchGridItem({ index, photo }: { index: number; photo: UnsplashPhoto }) {
+type SearchGridItemProps = {
+  index: number;
+  photo: UnsplashPhoto;
+};
+
+const SearchGridItem: React.FC<SearchGridItemProps> = ({ index, photo }) => {
   const entranceStyle = useEntranceAnimation({
     delay: Math.min(index % 12, 8) * 24,
     distance: 12,
@@ -58,9 +64,9 @@ function SearchGridItem({ index, photo }: { index: number; photo: UnsplashPhoto 
       </View>
     </AnimatedView>
   );
-}
+};
 
-export default function SearchResultsScreen() {
+const SearchResultsScreen: React.FC = () => {
   const params = useLocalSearchParams<{ query?: string }>();
   const query = params.query ?? "";
   const deferredQuery = useDeferredValue(query);
@@ -141,4 +147,6 @@ export default function SearchResultsScreen() {
       />
     </View>
   );
-}
+};
+
+export default SearchResultsScreen;

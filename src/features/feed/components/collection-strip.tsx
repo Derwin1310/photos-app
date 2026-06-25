@@ -1,3 +1,4 @@
+import type React from "react";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
 import { Image } from "expo-image";
@@ -27,7 +28,11 @@ type CollectionCardProps = {
   preview: ReturnType<typeof useCollectionPreviews>[number]["preview"];
 };
 
-function CollectionCard({ collection, index, preview }: CollectionCardProps) {
+const CollectionCard: React.FC<CollectionCardProps> = ({
+  collection,
+  index,
+  preview,
+}) => {
   const reducedMotion = useReducedMotion();
   const pressScale = useSharedValue(1);
   const entranceStyle = useEntranceAnimation({
@@ -74,9 +79,9 @@ function CollectionCard({ collection, index, preview }: CollectionCardProps) {
       </AppText>
     </AnimatedPressable>
   );
-}
+};
 
-export function CollectionStrip() {
+export const CollectionStrip: React.FC = () => {
   const collectionPreviews = useCollectionPreviews();
 
   return (
@@ -95,4 +100,4 @@ export function CollectionStrip() {
       />
     </View>
   );
-}
+};

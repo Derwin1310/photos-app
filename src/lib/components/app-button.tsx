@@ -1,3 +1,4 @@
+import type React from "react";
 import { Pressable, type PressableProps, type ViewStyle } from "react-native";
 import type { LucideIcon } from "lucide-react-native";
 import { useUnistyles } from "react-native-unistyles";
@@ -22,7 +23,7 @@ type AppButtonProps = Omit<PressableProps, "children"> & {
   variant?: "destructive" | "primary" | "secondary" | "tertiary";
 };
 
-export function AppButton({
+export const AppButton: React.FC<AppButtonProps> = ({
   fullWidth = false,
   icon,
   label,
@@ -31,7 +32,7 @@ export function AppButton({
   size = "md",
   variant = "primary",
   ...props
-}: AppButtonProps) {
+}) => {
   const { theme } = useUnistyles();
   const reducedMotion = useReducedMotion();
   const pressScale = useSharedValue(1);
@@ -76,4 +77,4 @@ export function AppButton({
       <AppText style={styles.label(variant)}>{label}</AppText>
     </AnimatedPressable>
   );
-}
+};

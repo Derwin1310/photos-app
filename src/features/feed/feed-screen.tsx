@@ -1,3 +1,4 @@
+import type React from "react";
 import { FlashList, type FlashListRef } from "@shopify/flash-list";
 import { useEffect, useRef, useState } from "react";
 import { Pressable, TextInput, View } from "react-native";
@@ -22,11 +23,80 @@ import { styles } from "./feed-screen.styles";
 const AnimatedView = Animated.View;
 const StyledFlashList = withUnistyles(FlashList) as typeof FlashList;
 
-export default function FeedScreen() {
-  const listRef = useRef<FlashListRef<UnsplashPhoto>>(null);
+const FeedListHeader: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const navigation = useNavigation();
   const { theme } = useUnistyles();
+  const headerEntranceStyle = useEntranceAnimation({ distance: 10 });
+
+  const trimmedSearchQuery = searchQuery.trim();
+
+  const submitSearch = () => {
+    if (!trimmedSearchQuery) {
+      return;
+    }
+
+    router.push({
+      pathname: "/search/[query]",
+      params: { query: trimmedSearchQuery },
+    });
+  };
+
+  return (
+    <AnimatedView style={[styles.header, headerEntranceStyle]}>
+      <SectionHeader
+        subtitle="Fresh photographs from people and places worth noticing."
+        title="Discover"
+      />
+      <View style={styles.searchCard}>
+        <View style={styles.searchInputRow}>
+          <AppIcon color={theme.colors.textTertiary} icon={Search} size={theme.size.iconMd} />
+          <TextInput
+            accessibilityLabel="Search photo collections"
+            autoCapitalize="none"
+            autoCorrect={false}
+            onChangeText={setSearchQuery}
+            onSubmitEditing={submitSearch}
+            placeholder="Search collections, moods, or scenes"
+            placeholderTextColor={theme.colors.placeholder}
+            returnKeyType="search"
+            style={styles.searchInput}
+            value={searchQuery}
+          />
+        </View>
+        <Pressable
+          accessibilityLabel="Search collections"
+          accessibilityRole="button"
+          accessibilityState={{ disabled: !trimmedSearchQuery }}
+          disabled={!trimmedSearchQuery}
+          hitSlop={8}
+          onPress={submitSearch}
+          style={({ pressed }) => [
+            styles.searchButton,
+            !trimmedSearchQuery && styles.searchButtonDisabled,
+            pressed && trimmedSearchQuery && styles.searchButtonPressed,
+          ]}
+        >
+          <AppText
+            style={[
+              styles.searchButtonText,
+              !trimmedSearchQuery && styles.searchButtonTextDisabled,
+            ]}
+            variant="bodySmall"
+          >
+            Search
+          </AppText>
+        </Pressable>
+      </View>
+      <CollectionStrip />
+    </AnimatedView>
+  )
+}
+
+const FeedScreen: React.FC = () => {
+  const listRef = useRef<FlashListRef<UnsplashPhoto>>(null);
+
+  const navigation = useNavigation();
+
   const {
     data,
     error,
@@ -37,7 +107,6 @@ export default function FeedScreen() {
     isRefetching,
     refetch,
   } = useFeedPhotosQuery();
-  const headerEntranceStyle = useEntranceAnimation({ distance: 10 });
 
   useEffect(() => {
     const tabNavigation = navigation as typeof navigation & {
@@ -51,18 +120,8 @@ export default function FeedScreen() {
   }, [navigation]);
 
   const photos = data?.pages.flat() ?? [];
-  const trimmedSearchQuery = searchQuery.trim();
 
-  function submitSearch() {
-    if (!trimmedSearchQuery) {
-      return;
-    }
 
-    router.push({
-      pathname: "/search/[query]",
-      params: { query: trimmedSearchQuery },
-    });
-  }
 
   if (isPending) {
     return (
@@ -83,55 +142,7 @@ export default function FeedScreen() {
   return (
     <StyledFlashList
       ref={listRef}
-      ListHeaderComponent={
-        <AnimatedView style={[styles.header, headerEntranceStyle]}>
-          <SectionHeader
-            subtitle="Fresh photographs from people and places worth noticing."
-            title="Discover"
-          />
-          <View style={styles.searchCard}>
-            <View style={styles.searchInputRow}>
-              <AppIcon color={theme.colors.textTertiary} icon={Search} size={theme.size.iconMd} />
-              <TextInput
-                accessibilityLabel="Search photo collections"
-                autoCapitalize="none"
-                autoCorrect={false}
-                onChangeText={setSearchQuery}
-                onSubmitEditing={submitSearch}
-                placeholder="Search collections, moods, or scenes"
-                placeholderTextColor={theme.colors.placeholder}
-                returnKeyType="search"
-                style={styles.searchInput}
-                value={searchQuery}
-              />
-            </View>
-            <Pressable
-              accessibilityLabel="Search collections"
-              accessibilityRole="button"
-              accessibilityState={{ disabled: !trimmedSearchQuery }}
-              disabled={!trimmedSearchQuery}
-              hitSlop={8}
-              onPress={submitSearch}
-              style={({ pressed }) => [
-                styles.searchButton,
-                !trimmedSearchQuery && styles.searchButtonDisabled,
-                pressed && trimmedSearchQuery && styles.searchButtonPressed,
-              ]}
-            >
-              <AppText
-                style={[
-                  styles.searchButtonText,
-                  !trimmedSearchQuery && styles.searchButtonTextDisabled,
-                ]}
-                variant="bodySmall"
-              >
-                Search
-              </AppText>
-            </Pressable>
-          </View>
-          <CollectionStrip />
-        </AnimatedView>
-      }
+      ListHeaderComponent={FeedListHeader}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={styles.content}
       data={photos}
@@ -169,4 +180,6 @@ export default function FeedScreen() {
       style={styles.list}
     />
   );
-}
+};
+
+export default FeedScreen;

@@ -1,3 +1,4 @@
+import type React from "react";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import Animated, {
@@ -48,13 +49,13 @@ type AppearanceChoiceProps = {
   selected: boolean;
 };
 
-function AppearanceChoice({
+const AppearanceChoice: React.FC<AppearanceChoiceProps> = ({
   description,
   index,
   label,
   onSelect,
   selected,
-}: AppearanceChoiceProps) {
+}) => {
   const reducedMotion = useReducedMotion();
   const pressScale = useSharedValue(1);
   const entranceStyle = useEntranceAnimation({
@@ -95,9 +96,13 @@ function AppearanceChoice({
       </View>
     </AnimatedPressable>
   );
-}
+};
 
-function SavedNotice({ label }: { label: string }) {
+type SavedNoticeProps = {
+  label: string;
+};
+
+const SavedNotice: React.FC<SavedNoticeProps> = ({ label }) => {
   const entranceStyle = useEntranceAnimation({ distance: 8 });
 
   return (
@@ -110,16 +115,16 @@ function SavedNotice({ label }: { label: string }) {
       </AppText>
     </AnimatedView>
   );
-}
+};
 
-export default function AppearanceScreen() {
+const AppearanceScreen: React.FC = () => {
   const { preference, setPreference } = useAppearance();
   const [savedPreference, setSavedPreference] = useState<AppearancePreference | null>(null);
 
-  function choosePreference(nextPreference: AppearancePreference) {
+  const choosePreference = (nextPreference: AppearancePreference) => {
     setPreference(nextPreference);
     setSavedPreference(nextPreference);
-  }
+  };
 
   return (
     <SafeAreaView style={styles.root}>
@@ -155,4 +160,6 @@ export default function AppearanceScreen() {
       </View>
     </SafeAreaView>
   );
-}
+};
+
+export default AppearanceScreen;

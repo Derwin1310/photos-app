@@ -1,3 +1,4 @@
+import type React from "react";
 import { memo, useEffect, useState } from "react";
 import { Pressable, View } from "react-native";
 import { Image } from "expo-image";
@@ -5,7 +6,6 @@ import { Heart, MapPin } from "lucide-react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import Animated, {
-  runOnJS,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
@@ -18,6 +18,7 @@ import { motion } from "@/lib/motion/motion";
 import { useEntranceAnimation } from "@/lib/motion/use-entrance-animation";
 import type { UnsplashPhoto } from "@/lib/types/photos";
 import { styles } from "./feed-card.styles";
+import { scheduleOnRN } from "react-native-worklets";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -28,7 +29,7 @@ type FeedCardProps = {
   photo: UnsplashPhoto;
 };
 
-export const FeedCard = memo(function FeedCard({ index = 0, photo }: FeedCardProps) {
+const FeedCardBase: React.FC<FeedCardProps> = ({ index = 0, photo }) => {
   const [liked, setLiked] = useState(false);
   const heartScale = useSharedValue(0);
   const likeScale = useSharedValue(1);
@@ -71,15 +72,13 @@ export const FeedCard = memo(function FeedCard({ index = 0, photo }: FeedCardPro
     }
   }, [likeScale, liked, reducedMotion]);
 
-  function likePhoto() {
-    setLiked(true);
-  }
+  const likePhoto = () => setLiked(true);
 
   const doubleTap = Gesture.Tap()
     .numberOfTaps(2)
     .maxDuration(220)
     .onStart(() => {
-      runOnJS(likePhoto)();
+      scheduleOnRN(likePhoto)
       heartScale.value = withSequence(
         withSpring(reducedMotion ? 0 : 0.92, { damping: 13, stiffness: 380, mass: 0.55 }),
         withTiming(0, { duration: reducedMotion ? 0 : 110 }),
@@ -163,4 +162,6 @@ export const FeedCard = memo(function FeedCard({ index = 0, photo }: FeedCardPro
       </AppText>
     </AnimatedView>
   );
-});
+};
+
+export const FeedCard = memo(FeedCardBase);

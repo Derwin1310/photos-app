@@ -1,3 +1,4 @@
+import type React from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
 import { AppText } from "@/lib/components/app-text";
@@ -11,7 +12,7 @@ type EmptyStateProps = {
   message: string;
 };
 
-export function EmptyState({ title, message }: EmptyStateProps) {
+export const EmptyState: React.FC<EmptyStateProps> = ({ title, message }) => {
   const entranceStyle = useEntranceAnimation({ distance: 8 });
 
   return (
@@ -20,4 +21,4 @@ export function EmptyState({ title, message }: EmptyStateProps) {
       <AppText tone="muted">{message}</AppText>
     </AnimatedView>
   );
-}
+};

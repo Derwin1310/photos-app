@@ -1,3 +1,4 @@
+import type React from "react";
 import { FlashList } from "@shopify/flash-list";
 import { Alert, View } from "react-native";
 import { router } from "expo-router";
@@ -30,17 +31,19 @@ const profileStats = [
   { icon: Share2, label: "Shareable" },
 ] as const;
 
-function GalleryPhotoCard({
-  confirmDelete,
-  index,
-  item,
-  sharePhoto,
-}: {
+type GalleryPhotoCardProps = {
   confirmDelete: (photo: GalleryPhoto) => void;
   index: number;
   item: GalleryPhoto;
   sharePhoto: (uri: string) => void;
-}) {
+};
+
+const GalleryPhotoCard: React.FC<GalleryPhotoCardProps> = ({
+  confirmDelete,
+  index,
+  item,
+  sharePhoto,
+}) => {
   const entranceStyle = useEntranceAnimation({
     delay: Math.min(index, 6) * 34,
     distance: 14,
@@ -84,9 +87,13 @@ function GalleryPhotoCard({
       </View>
     </AnimatedView>
   );
-}
+};
 
-function GalleryListHeader(photos: GalleryPhoto[]) {
+type GalleryListHeaderProps = {
+  photos: GalleryPhoto[];
+};
+
+const GalleryListHeader: React.FC<GalleryListHeaderProps> = ({ photos }) => {
   const { theme } = useUnistyles();
 
   const statValues = {
@@ -98,64 +105,63 @@ function GalleryListHeader(photos: GalleryPhoto[]) {
   const headerEntranceStyle = useEntranceAnimation({ distance: 12 });
 
   return (
-        <AnimatedView style={[styles.header, headerEntranceStyle]}>
-          <View style={styles.profileCard}>
-            <View style={styles.profileRow}>
-              <StyledImage
-                contentFit="cover"
-                source={images.ownerProfile}
-                style={styles.profileImage}
-              />
-              <View style={styles.profileInfo}>
-                <AppText variant="headline">Lina Rios</AppText>
-                <AppText tone="muted">@lina_rios</AppText>
-                <AppText tone="muted" variant="bodySmall">
-                  Photo journaler building a share-ready collection from saved captures.
-                </AppText>
-              </View>
-            </View>
-
-            <View style={styles.statRow}>
-              {profileStats.map(({ icon: Icon, label }, index) => (
-                <View
-                  key={label}
-                  style={styles.stat(index)}
-                >
-                  <Icon
-                    color={
-                      index === 0
-                        ? theme.colors.accent
-                        : index === 1
-                          ? theme.colors.accentSecondary
-                          : theme.colors.accentTertiary
-                    }
-                    size={theme.size.iconMd}
-                    strokeWidth={2.2}
-                  />
-                  <AppText style={styles.statValue} variant="title">
-                    {formatCompactNumber(statValues[label])}
-                  </AppText>
-                  <AppText tone="muted" variant="bodySmall">
-                    {label}
-                  </AppText>
-                </View>
-              ))}
-            </View>
-          </View>
-
-          <SectionHeader
-            subtitle="Your camera saves, captions, and share-ready memories live here."
-            title="Saved captures"
+    <AnimatedView style={[styles.header, headerEntranceStyle]}>
+      <View style={styles.profileCard}>
+        <View style={styles.profileRow}>
+          <StyledImage
+            contentFit="cover"
+            source={images.ownerProfile}
+            style={styles.profileImage}
           />
-        </AnimatedView>
-  )
-}
+          <View style={styles.profileInfo}>
+            <AppText variant="headline">Lina Rios</AppText>
+            <AppText tone="muted">@lina_rios</AppText>
+            <AppText tone="muted" variant="bodySmall">
+              Photo journaler building a share-ready collection from saved captures.
+            </AppText>
+          </View>
+        </View>
 
-export default function ProfileScreen() {
+        <View style={styles.statRow}>
+          {profileStats.map(({ icon: Icon, label }, index) => (
+            <View
+              key={label}
+              style={styles.stat(index)}
+            >
+              <Icon
+                color={
+                  index === 0
+                    ? theme.colors.accent
+                    : index === 1
+                      ? theme.colors.accentSecondary
+                      : theme.colors.accentTertiary
+                }
+                size={theme.size.iconMd}
+                strokeWidth={2.2}
+              />
+              <AppText style={styles.statValue} variant="title">
+                {formatCompactNumber(statValues[label])}
+              </AppText>
+              <AppText tone="muted" variant="bodySmall">
+                {label}
+              </AppText>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <SectionHeader
+        subtitle="Your camera saves, captions, and share-ready memories live here."
+        title="Saved captures"
+      />
+    </AnimatedView>
+  );
+};
+
+const ProfileScreen: React.FC = () => {
   const { deletePhoto, error, hydrated, photos, restorePhoto } = useGallery();
 
-
-  async function sharePhoto(uri: string) {
+  const sharePhoto = async (uri: string) => {
     try {
       const canShare = await Sharing.isAvailableAsync();
 
@@ -171,9 +177,9 @@ export default function ProfileScreen() {
         shareError instanceof Error ? shareError.message : "Could not share that photo.",
       );
     }
-  }
+  };
 
-  const confirmDelete = async (photo: GalleryPhoto)  => {
+  const confirmDelete = async (photo: GalleryPhoto) => {
     Alert.alert("Delete photo?", "This will remove it from your local gallery.", [
       { style: "cancel", text: "Keep it" },
       {
@@ -218,7 +224,7 @@ export default function ProfileScreen() {
         },
       },
     ]);
-  }
+  };
 
   if (!hydrated) {
     return (
@@ -238,7 +244,7 @@ export default function ProfileScreen() {
 
   return (
     <StyledFlashList<GalleryPhoto>
-      ListHeaderComponent={GalleryListHeader}
+      ListHeaderComponent={<GalleryListHeader photos={photos} />}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={styles.content}
       data={photos}
@@ -262,4 +268,6 @@ export default function ProfileScreen() {
       style={styles.list}
     />
   );
-}
+};
+
+export default ProfileScreen;

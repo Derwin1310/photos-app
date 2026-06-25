@@ -1,3 +1,4 @@
+import type React from "react";
 import { useEffect, useState } from "react";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import * as Haptics from "expo-haptics";
@@ -24,7 +25,11 @@ import { styles } from "./edit-photo-screen.styles";
 const AnimatedView = Animated.View;
 const StyledImage = withUnistyles(Image);
 
-function InlineError({ message }: { message: string }) {
+type InlineErrorProps = {
+  message: string;
+};
+
+const InlineError: React.FC<InlineErrorProps> = ({ message }) => {
   const entranceStyle = useEntranceAnimation({ distance: 6 });
 
   return (
@@ -32,9 +37,9 @@ function InlineError({ message }: { message: string }) {
       <AppText style={styles.errorText}>{message}</AppText>
     </AnimatedView>
   );
-}
+};
 
-export default function EditPhotoScreen() {
+const EditPhotoScreen: React.FC = () => {
   const params = useLocalSearchParams<{ mode?: string; photoId?: string }>();
   const {
     addPhoto,
@@ -63,7 +68,7 @@ export default function EditPhotoScreen() {
     if (isDraftMode) {
       updateDraftCaption(nextCaption);
     }
-  }
+  };
 
   if (!sourcePhoto) {
     return (
@@ -133,7 +138,7 @@ export default function EditPhotoScreen() {
     } finally {
       setIsSaving(false);
     }
-  }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -198,4 +203,6 @@ export default function EditPhotoScreen() {
       </Pressable>
     </KeyboardAvoidingView>
   );
-}
+};
+
+export default EditPhotoScreen;

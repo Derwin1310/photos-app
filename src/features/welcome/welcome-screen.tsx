@@ -1,3 +1,4 @@
+import type React from "react";
 import { Pressable, View } from "react-native";
 import { router } from "expo-router";
 import { Image } from "expo-image";
@@ -20,7 +21,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const AnimatedView = Animated.View;
 const StyledImage = withUnistyles(Image);
 
-export default function WelcomeScreen() {
+const WelcomeScreen: React.FC = () => {
   const { theme } = useUnistyles();
   const reducedMotion = useReducedMotion();
   const pressScale = useSharedValue(1);
@@ -73,11 +74,13 @@ export default function WelcomeScreen() {
             onPress={() => router.push("/feed")}
             style={[styles.startExploringButton, pressStyle]}
           >
-            <AppIcon color={theme.colors.text} icon={Camera} size={20} />
+            <AppIcon color="#3D2D24" icon={Camera} size={20} />
             <AppText style={styles.textButton}>Start exploring</AppText>
           </AnimatedPressable>
         </AnimatedView>
       </View>
     </View>
   );
-}
+};
+
+export default WelcomeScreen;
