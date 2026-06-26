@@ -1,0 +1,269 @@
+{
+  "version": 1,
+  "skills": {
+    "acul-screen-generator": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/acul-screen-generator/SKILL.md",
+      "computedHash": "407dec9f77bed109aafdf1a5f626758c2d9cfc1e8b472dac64f84add039dbb4d"
+    },
+    "auth0-android": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-android/SKILL.md",
+      "computedHash": "acf6d2b24c1c8a182b2a86840af83872259d7df34d7deb45ceb5acf638e49ed2"
+    },
+    "auth0-android-major-migration": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-android-major-migration/SKILL.md",
+      "computedHash": "1f530359da1d139ab3d94c65bd4abf4e470c9a1ae9b810cb2504d03183a60646"
+    },
+    "auth0-angular": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-angular/SKILL.md",
+      "computedHash": "817b084e42d8268acf8737fb67c6a4c3f9a9654dc51df56a9b3fd09762eb3672"
+    },
+    "auth0-aspnetcore-api": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-aspnetcore-api/SKILL.md",
+      "computedHash": "dccb94f9ed82968713288af0a17a1c11e3021176423d5dceb2561263ccba93b8"
+    },
+    "auth0-aspnetcore-authentication": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-aspnetcore-authentication/SKILL.md",
+      "computedHash": "d80c50267890bcbab7c8b279260649d6d86056d0d8edd97aa6a7f78ca00f3d26"
+    },
+    "auth0-branding": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-branding/SKILL.md",
+      "computedHash": "6e3f1f05aeda42fc16c3519dd16627da7a554898b990dd77d865904fe006766e"
+    },
+    "auth0-cli": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-cli/SKILL.md",
+      "computedHash": "d85b7ce522db9a8029d17832495c3772da743951dafe6f75a1f5b4d0f731ba2d"
+    },
+    "auth0-custom-domains": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-custom-domains/SKILL.md",
+      "computedHash": "cacc3fefbb9a6f57f81304411e2e9aeb173bc927b88de5c8d208d922ce8a65c6"
+    },
+    "auth0-expo": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-expo/SKILL.md",
+      "computedHash": "bdfcd3cd1dd2f1f6703cea733d9341bed88b9e8003a8cb2d58d33810b6104d80"
+    },
+    "auth0-express": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-express/SKILL.md",
+      "computedHash": "c3fc85afe761fb28fe4dc1d21542a23e587dc33ef8cd4b2b82c1413516de8030"
+    },
+    "auth0-fastapi-api": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-fastapi-api/SKILL.md",
+      "computedHash": "2eb5064c45ebbf384f57e6224f326155471fd1dda589a03fcf7d22d9f3e38255"
+    },
+    "auth0-fastify": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-fastify/SKILL.md",
+      "computedHash": "f997c1a6f3a1ce1b01e2f979f89bacef79a0f7e67f3c42de8c8527e901a1028f"
+    },
+    "auth0-fastify-api": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-fastify-api/SKILL.md",
+      "computedHash": "237b8b6d32fe948d75f4d59191d7c147418c9db959987bc1717b8463a421758a"
+    },
+    "auth0-flask": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-flask/SKILL.md",
+      "computedHash": "3d6a0499e01f5a4e768e88bb9be76433ff1cfbc6741db8323c0fccabe2b3ef35"
+    },
+    "auth0-flutter-native": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-flutter-native/SKILL.md",
+      "computedHash": "a890030c9ca53ee96c9b900a2c68f08c288aad12527313aa7f204cf65c91299a"
+    },
+    "auth0-flutter-web": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-flutter-web/SKILL.md",
+      "computedHash": "2ea588c5c477345fc1da74f3868193d4e98832145c700eadb62ec0a32afb0eb4"
+    },
+    "auth0-ionic-angular": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-ionic-angular/SKILL.md",
+      "computedHash": "b217f796fa92bde7d908a992b3d279e05b1b56eeb3a19448bfb98ea92737172b"
+    },
+    "auth0-ionic-react": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-ionic-react/SKILL.md",
+      "computedHash": "2aae130c02444ddb134a86b6525d49093ac0124771e78c96d0010ef1ed976deb"
+    },
+    "auth0-ionic-vue": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-ionic-vue/SKILL.md",
+      "computedHash": "5f0844978e4bf25908d0ec3f000ab5531aa219b1324472187ef9aab685b8fdce"
+    },
+    "auth0-java-mvc-common": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-java-mvc-common/SKILL.md",
+      "computedHash": "ea6b784f872452e01c40e8d79d6fef2b7ac0b488e5081220b14190c1591433a5"
+    },
+    "auth0-laravel": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-laravel/SKILL.md",
+      "computedHash": "074c3f388ec2531bb5f1c587f5d983683e318598cc22142ea41991afe582a8b9"
+    },
+    "auth0-laravel-api": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-laravel-api/SKILL.md",
+      "computedHash": "5b30512c21ff2b9878666c3a567410dccf36ccb1318f644f9980ada51e74dcbb"
+    },
+    "auth0-maui": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-maui/SKILL.md",
+      "computedHash": "52565a3f085c1030d4321810ae4e2bbe3c832301ef51217a330491e6f7983de4"
+    },
+    "auth0-mfa": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-mfa/SKILL.md",
+      "computedHash": "64a27274b40c336f93190959c83bcca10eee439e97894a40c8e08177e05b7098"
+    },
+    "auth0-migration": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-migration/SKILL.md",
+      "computedHash": "b0c79e6d23cba97ff33dae98a578c77fc83d78656ae1a8e2d398d5601daba5a2"
+    },
+    "auth0-net-android": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-net-android/SKILL.md",
+      "computedHash": "42afe5030c2bbe02bb69e42149442a8a1c45775873ace60267d834348f303c8c"
+    },
+    "auth0-net-ios": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-net-ios/SKILL.md",
+      "computedHash": "ea9ca0ca3926909cfe9d13ffaa1bae94904bc8b1519e429b88f30eee6721223d"
+    },
+    "auth0-nextjs": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-nextjs/SKILL.md",
+      "computedHash": "12c73cec290862591c5607402242335f78a6fb9143169615df0fa586e8e3a535"
+    },
+    "auth0-nuxt": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-nuxt/SKILL.md",
+      "computedHash": "bf6a4855b0a0df2be17f14787d1b8a5a0f97663631468d87cb4557bf40c5bd8f"
+    },
+    "auth0-php": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-php/SKILL.md",
+      "computedHash": "0e6130bf0baa67f37d3b01710681217a950bf4df3c21fec61f61ac72663829b2"
+    },
+    "auth0-php-api": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-php-api/SKILL.md",
+      "computedHash": "4d2032c2d80ddd7eb68d64321a35631cfcd27ea811edaa00602201aee6f5db35"
+    },
+    "auth0-quickstart": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-quickstart/SKILL.md",
+      "computedHash": "d962526d529942197646dca7528958e3006c35fb0a8704b92b3113e24c3ec183"
+    },
+    "auth0-react": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-react/SKILL.md",
+      "computedHash": "c2a24853aceeac225b9ad365e1f863c04853b7af0d71ad1473b922aec6ba1be1"
+    },
+    "auth0-react-native": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-react-native/SKILL.md",
+      "computedHash": "e1fbd05bf9316e97162d5b3a00a152315288c47c1114c70fbd710bc0ec580cf9"
+    },
+    "auth0-spa-js": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-spa-js/SKILL.md",
+      "computedHash": "f56e153786e1f118109c1915688727ad0fc080f3d9f1a0c6c59c1549e0d330d7"
+    },
+    "auth0-springboot-api": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-springboot-api/SKILL.md",
+      "computedHash": "0b97a32ae49200b6d20863f63722c1875d9e94e66c6db56d51ffbf07d532161a"
+    },
+    "auth0-swift": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-swift/SKILL.md",
+      "computedHash": "66abc224737ab2bbc6c70bb1c1610c322b363c7d0e73ff49265cef962233872f"
+    },
+    "auth0-swift-major-migration": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-swift-major-migration/SKILL.md",
+      "computedHash": "b6808a5be5af36d9abc1bf7e9ee996abf1f746775a0f302da61b2ab2b13ae184"
+    },
+    "auth0-vue": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-vue/SKILL.md",
+      "computedHash": "26e391ce3c97f2b0b9454fdd4546112d6635242253a1d12acfe76bd29e930d76"
+    },
+    "auth0-winforms": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-winforms/SKILL.md",
+      "computedHash": "2b40e41aefe1c089896e4d9e1bd3f46f06e1433cd3a93157659520e893afa6af"
+    },
+    "auth0-wpf": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/auth0-wpf/SKILL.md",
+      "computedHash": "896095bc0f41a670805b85353a62711c8b156b790bd2391d12893189ba0f7f89"
+    },
+    "express-oauth2-jwt-bearer": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/express-oauth2-jwt-bearer/SKILL.md",
+      "computedHash": "04a235b06a31999bd79ee41e7b61629fb5c9ad2ef0891fae2422b4501392d0ce"
+    },
+    "go-jwt-middleware": {
+      "source": "auth0/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/auth0/skills/go-jwt-middleware/SKILL.md",
+      "computedHash": "66fa0cce9ca51bb2818166f031dbbef3a214881b33c2996470e9b591a47f74bd"
+    }
+  }
+}
