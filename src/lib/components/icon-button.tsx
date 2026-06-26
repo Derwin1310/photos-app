@@ -1,5 +1,5 @@
 import type React from "react";
-import { Pressable, type PressableProps, type ViewStyle } from "react-native";
+import { Pressable, type PressableProps } from "react-native";
 import type { LucideIcon } from "lucide-react-native";
 import { useUnistyles } from "react-native-unistyles";
 import Animated, {
@@ -20,7 +20,7 @@ type IconButtonProps = Omit<PressableProps, "style"> & {
   label: string;
   size?: "md" | "sm";
   showLabel?: boolean;
-  variant?: "ghost" | "overlay" | "primary" | "surface";
+  variant?: "danger" | "ghost" | "overlay" | "primary" | "surface";
 };
 
 export const IconButton: React.FC<IconButtonProps> = ({
@@ -39,6 +39,8 @@ export const IconButton: React.FC<IconButtonProps> = ({
   const iconColor =
     variant === "primary" || variant === "overlay"
       ? theme.colors.textInverse
+      : variant === "danger"
+        ? theme.colors.danger
       : theme.colors.text;
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -65,11 +67,10 @@ export const IconButton: React.FC<IconButtonProps> = ({
         });
         onPressOut?.(event);
       }}
-      style={(state) => [
+      style={[
         styles.button(variant, size, showLabel),
-        state.pressed && styles.pressed,
         animatedStyle,
-      ] as ViewStyle[]}
+      ]}
     >
       <AppIcon color={iconColor} icon={icon} size={size === "md" ? 20 : 18} />
       {showLabel ? (

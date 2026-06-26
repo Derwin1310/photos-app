@@ -21,11 +21,13 @@ export const styles = StyleSheet.create((theme) => ({
     borderRadius: theme.radius.md,
     borderWidth: variant === "tertiary" ? theme.border.default : 0,
     flexDirection: "row",
+    flexShrink: 0,
     gap: theme.space.xs,
     justifyContent: "center",
     minHeight: size === "md" ? theme.size.touch : theme.size.compactTouch,
     paddingHorizontal: size === "md" ? theme.space.md : theme.space.sm,
   }),
+  disabled: { opacity: 0.6 },
   label: (variant: "destructive" | "primary" | "secondary" | "tertiary") => ({
     color:
       variant === "primary"
@@ -35,6 +37,7 @@ export const styles = StyleSheet.create((theme) => ({
           : theme.colors.text,
     fontSize: theme.typography.title.fontSize,
     fontWeight: "600",
+    flexShrink: 0,
   }),
   pressed: { opacity: 0.78 },
 }));

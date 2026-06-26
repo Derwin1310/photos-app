@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native-unistyles";
 
 export const styles = StyleSheet.create((theme) => ({
   button: (
-    variant: "ghost" | "overlay" | "primary" | "surface",
+    variant: "danger" | "ghost" | "overlay" | "primary" | "surface",
     size: "md" | "sm",
     showLabel: boolean,
   ) => ({
@@ -12,6 +12,8 @@ export const styles = StyleSheet.create((theme) => ({
         ? theme.colors.accent
         : variant === "overlay"
           ? theme.colors.cameraScrim
+          : variant === "danger"
+            ? theme.colors.dangerSoft
           : variant === "surface"
             ? theme.colors.surfaceSubtle
             : "transparent",
@@ -24,8 +26,13 @@ export const styles = StyleSheet.create((theme) => ({
     minWidth: size === "md" ? theme.size.touch : theme.size.compactTouch,
     paddingHorizontal: showLabel ? (size === "md" ? theme.space.md : theme.space.sm) : theme.space.none,
   }),
-  label: (variant: "ghost" | "overlay" | "primary" | "surface") => ({
-    color: variant === "primary" || variant === "overlay" ? theme.colors.textInverse : theme.colors.text,
+  label: (variant: "danger" | "ghost" | "overlay" | "primary" | "surface") => ({
+    color:
+      variant === "primary" || variant === "overlay"
+        ? theme.colors.textInverse
+        : variant === "danger"
+          ? theme.colors.danger
+          : theme.colors.text,
     fontWeight: "600",
   }),
   pressed: { opacity: 0.8 },

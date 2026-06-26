@@ -6,12 +6,14 @@ import { Image } from "expo-image";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import * as Haptics from "expo-haptics";
 import * as Sharing from "expo-sharing";
-import { Camera, MessageCircle, Pencil, Share2, Trash2 } from "lucide-react-native";
+import { Camera, LogOut, MessageCircle, Pencil, Share2, Trash2 } from "lucide-react-native";
 import Animated from "react-native-reanimated";
 import { images } from "@/assets/images";
+import { useAuth, type AuthUser } from "@/features/auth/auth-provider";
 import { useGallery } from "@/features/gallery/gallery-provider";
 import { AppText } from "@/lib/components/app-text";
 import { AppButton } from "@/lib/components/app-button";
+import { IconButton } from "@/lib/components/icon-button";
 import { EmptyState } from "@/lib/components/empty-state";
 import { ErrorState } from "@/lib/components/error-state";
 import { LoadingState } from "@/lib/components/loading-state";
@@ -26,9 +28,8 @@ const StyledImage = withUnistyles(Image);
 const StyledFlashList = withUnistyles(FlashList) as typeof FlashList;
 
 const profileStats = [
-  { icon: Camera, label: "Photos" },
-  { icon: MessageCircle, label: "Captions" },
-  { icon: Share2, label: "Shareable" },
+  { icon: Camera, label: "Captures", value: "captures" },
+  { icon: MessageCircle, label: "Captioned", value: "captioned" },
 ] as const;
 
 type GalleryPhotoCardProps = {
@@ -68,7 +69,6 @@ const GalleryPhotoCard: React.FC<GalleryPhotoCardProps> = ({
             </AppText>
           </View>
           <View style={styles.actions}>
-            <AppButton icon={Share2} label="Share" onPress={() => void sharePhoto(item.uri)} size="sm" variant="secondary" />
             <AppButton
               icon={Pencil}
               label="Edit"
@@ -81,7 +81,20 @@ const GalleryPhotoCard: React.FC<GalleryPhotoCardProps> = ({
               size="sm"
               variant="secondary"
             />
-            <AppButton icon={Trash2} label="Delete" onPress={() => void confirmDelete(item)} size="sm" variant="destructive" />
+            <IconButton
+              icon={Share2}
+              label="Share photo"
+              onPress={() => void sharePhoto(item.uri)}
+              size="sm"
+              variant="surface"
+            />
+            <IconButton
+              icon={Trash2}
+              label="Delete photo"
+              onPress={() => void confirmDelete(item)}
+              size="sm"
+              variant="danger"
+            />
           </View>
         </View>
       </View>
@@ -90,40 +103,66 @@ const GalleryPhotoCard: React.FC<GalleryPhotoCardProps> = ({
 };
 
 type GalleryListHeaderProps = {
+  isSigningOut: boolean;
+  onLogout: () => void;
   photos: GalleryPhoto[];
+  user: AuthUser | null;
 };
 
-const GalleryListHeader: React.FC<GalleryListHeaderProps> = ({ photos }) => {
+const GalleryListHeader: React.FC<GalleryListHeaderProps> = ({
+  isSigningOut,
+  onLogout,
+  photos,
+  user,
+}) => {
   const { theme } = useUnistyles();
 
   const statValues = {
-    Captions: photos.filter((photo) => photo.caption.trim().length > 0).length,
-    Photos: photos.length,
-    Shareable: photos.length,
+    captioned: photos.filter((photo) => photo.caption.trim().length > 0).length,
+    captures: photos.length,
   } as const;
 
   const headerEntranceStyle = useEntranceAnimation({ distance: 12 });
 
   return (
     <AnimatedView style={[styles.header, headerEntranceStyle]}>
+      <View style={styles.accountPanel}>
+        <View style={styles.accountCopy}>
+          <AppText variant="title">Account</AppText>
+          <AppText numberOfLines={1} tone="muted" variant="bodySmall">
+            {user?.email ?? "Google account connected"}
+          </AppText>
+        </View>
+        <AppButton
+          accessibilityState={{ busy: isSigningOut, disabled: isSigningOut }}
+          disabled={isSigningOut}
+          icon={LogOut}
+          label={isSigningOut ? "Signing out..." : "Log out"}
+          onPress={onLogout}
+          size="sm"
+          variant="tertiary"
+        />
+      </View>
+    
       <View style={styles.profileCard}>
         <View style={styles.profileRow}>
           <StyledImage
             contentFit="cover"
-            source={images.ownerProfile}
+            source={user?.picture ? { uri: user.picture } : images.profileFallback}
             style={styles.profileImage}
           />
           <View style={styles.profileInfo}>
-            <AppText variant="headline">Lina Rios</AppText>
-            <AppText tone="muted">@lina_rios</AppText>
+            <AppText numberOfLines={1} variant="headline">
+              {user?.name ?? "PicXplorer user"}
+            </AppText>
             <AppText tone="muted" variant="bodySmall">
-              Photo journaler building a share-ready collection from saved captures.
+              Your personal gallery dashboard for camera saves and captions.
             </AppText>
           </View>
         </View>
 
         <View style={styles.statRow}>
-          {profileStats.map(({ icon: Icon, label }, index) => (
+          {profileStats.map(({ icon: Icon, label, value }, index) => (
             <View
               key={label}
               style={styles.stat(index)}
@@ -140,7 +179,7 @@ const GalleryListHeader: React.FC<GalleryListHeaderProps> = ({ photos }) => {
                 strokeWidth={2.2}
               />
               <AppText style={styles.statValue} variant="title">
-                {formatCompactNumber(statValues[label])}
+                {formatCompactNumber(statValues[value])}
               </AppText>
               <AppText tone="muted" variant="bodySmall">
                 {label}
@@ -159,6 +198,7 @@ const GalleryListHeader: React.FC<GalleryListHeaderProps> = ({ photos }) => {
 };
 
 const ProfileScreen: React.FC = () => {
+  const { isSigningOut, signOut, user } = useAuth();
   const { deletePhoto, error, hydrated, photos, restorePhoto } = useGallery();
 
   const sharePhoto = async (uri: string) => {
@@ -244,7 +284,14 @@ const ProfileScreen: React.FC = () => {
 
   return (
     <StyledFlashList<GalleryPhoto>
-      ListHeaderComponent={<GalleryListHeader photos={photos} />}
+      ListHeaderComponent={
+        <GalleryListHeader
+          isSigningOut={isSigningOut}
+          onLogout={() => void signOut()}
+          photos={photos}
+          user={user}
+        />
+      }
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={styles.content}
       data={photos}

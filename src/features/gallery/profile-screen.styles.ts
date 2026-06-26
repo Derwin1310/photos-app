@@ -1,7 +1,21 @@
 import { StyleSheet } from "react-native-unistyles";
 
 export const styles = StyleSheet.create((theme) => ({
-  actions: { flexDirection: "row", flexWrap: "wrap", gap: theme.space.xs },
+  accountCopy: { flex: 1, gap: theme.space.xxs, minWidth: 0 },
+  accountPanel: {
+    alignItems: "center",
+    backgroundColor: theme.colors.surfaceRaised,
+    borderColor: theme.colors.border,
+    borderCurve: "continuous",
+    borderRadius: theme.radius.md,
+    borderWidth: theme.border.default,
+    flexDirection: "row",
+    gap: theme.space.sm,
+    justifyContent: "space-between",
+    minWidth: 0,
+    padding: theme.space.md,
+  },
+  actions: { alignItems: "center", flexDirection: "row", flexWrap: "wrap", gap: theme.space.xs },
   card: {
     backgroundColor: theme.colors.surfaceRaised,
     borderColor: theme.colors.border,
@@ -21,7 +35,7 @@ export const styles = StyleSheet.create((theme) => ({
     height: theme.size.galleryThumbnail,
     width: theme.size.galleryThumbnail,
   },
-  info: { flex: 1, gap: theme.space.sm, justifyContent: "space-between" },
+  info: { flex: 1, gap: theme.space.sm, justifyContent: "space-between", minWidth: 0 },
   list: { backgroundColor: theme.colors.background, flex: 1 },
   photoRow: { flexDirection: "row", gap: theme.space.md },
   profileCard: {
@@ -39,7 +53,7 @@ export const styles = StyleSheet.create((theme) => ({
     height: theme.size.profileAvatar,
     width: theme.size.profileAvatar,
   },
-  profileInfo: { flex: 1, gap: theme.space.xxs },
+  profileInfo: { flex: 1, gap: theme.space.xxs, minWidth: 0 },
   profileRow: { alignItems: "center", flexDirection: "row", gap: theme.space.md },
   separator: { height: theme.space.sm },
   stat: (index: number) => ({
@@ -54,6 +68,6 @@ export const styles = StyleSheet.create((theme) => ({
     flex: 1,
     padding: theme.space.sm,
   }),
-  statRow: { flexDirection: "row", gap: theme.space.xs, justifyContent: "space-between" },
+  statRow: { flexDirection: "row", gap: theme.space.sm, justifyContent: "space-between" },
   statValue: { marginTop: theme.space.sm },
 }));

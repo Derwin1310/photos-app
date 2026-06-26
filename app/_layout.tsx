@@ -1,3 +1,4 @@
+import type React from "react";
 import { useEffect } from "react";
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -6,14 +7,16 @@ import { Jua_400Regular } from "@expo-google-fonts/jua";
 import { useFonts as useExpoFonts } from "expo-font";
 import { useUnistyles } from "react-native-unistyles";
 import { AppProviders } from "@/providers/app-providers";
-import { Platform } from "react-native"
+import { Platform, View } from "react-native";
+import { useAuth } from "@/features/auth/auth-provider";
+import { LoadingState } from "@/lib/components/loading-state";
 
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
 SplashScreen.setOptions({ duration: 250, fade: true });
 
-export default function RootLayout() {
+const RootNavigator: React.FC = () => {
+  const { isAuthenticated, isLoading } = useAuth();
   const { theme } = useUnistyles();
-  const [fontsLoaded, fontError] = useExpoFonts({ Jua_400Regular });
   const baseNavigationTheme = theme.isDark ? DarkTheme : DefaultTheme;
   const navigationTheme = {
     ...baseNavigationTheme,
@@ -28,34 +31,37 @@ export default function RootLayout() {
     },
   };
 
-  useEffect(() => {
-    if (fontsLoaded || fontError) {
-      SplashScreen.hideAsync().catch(() => undefined);
-    }
-  }, [fontError, fontsLoaded]);
-
-  if (!fontsLoaded && !fontError) {
-    return null;
+  if (isLoading) {
+    return (
+      <ThemeProvider value={navigationTheme}>
+        <StatusBar style={theme.isDark ? "light" : "dark"} />
+        <View style={{ backgroundColor: theme.colors.background, flex: 1 }}>
+          <LoadingState message="Checking your session..." />
+        </View>
+      </ThemeProvider>
+    );
   }
 
   return (
-    <AppProviders>
-      <ThemeProvider value={navigationTheme}>
-        <StatusBar style={theme.isDark ? "light" : "dark"} />
-        <Stack
-          screenOptions={{
-            contentStyle: { backgroundColor: theme.colors.background },
-            headerShadowVisible: false,
-            headerStyle: { backgroundColor: theme.colors.surface },
-            headerTintColor: theme.colors.text,
-            headerTitleStyle: {
-              color: theme.colors.text,
-              fontSize: theme.typography.title.fontSize,
-              fontWeight: "700",
-            },
-          }}
-        >
+    <ThemeProvider value={navigationTheme}>
+      <StatusBar style={theme.isDark ? "light" : "dark"} />
+      <Stack
+        screenOptions={{
+          contentStyle: { backgroundColor: theme.colors.background },
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: theme.colors.surface },
+          headerTintColor: theme.colors.text,
+          headerTitleStyle: {
+            color: theme.colors.text,
+            fontSize: theme.typography.title.fontSize,
+            fontWeight: "700",
+          },
+        }}
+      >
+        <Stack.Protected guard={!isAuthenticated}>
           <Stack.Screen name="index" options={{ headerShown: false }} />
+        </Stack.Protected>
+        <Stack.Protected guard={isAuthenticated}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen
             name="search/[query]"
@@ -81,9 +87,29 @@ export default function RootLayout() {
               sheetGrabberVisible: true,
             }}
           />
-          <Stack.Screen name="+not-found" options={{ title: "Not found" }} />
-        </Stack>
-      </ThemeProvider>
+        </Stack.Protected>
+        <Stack.Screen name="+not-found" options={{ title: "Not found" }} />
+      </Stack>
+    </ThemeProvider>
+  );
+};
+
+export default function RootLayout() {
+  const [fontsLoaded, fontError] = useExpoFonts({ Jua_400Regular });
+
+  useEffect(() => {
+    if (fontsLoaded || fontError) {
+      SplashScreen.hideAsync().catch(() => undefined);
+    }
+  }, [fontError, fontsLoaded]);
+
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
+
+  return (
+    <AppProviders>
+      <RootNavigator />
     </AppProviders>
   );
 }
