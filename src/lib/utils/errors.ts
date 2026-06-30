@@ -9,6 +9,16 @@ export class ApiError extends Error {
   }
 }
 
+export class PhotoLibraryPermissionError extends Error {
+  constructor(
+    message = "Allow PicXplorer to save images to your photo library.",
+    public readonly canOpenSettings = true,
+  ) {
+    super(message);
+    this.name = "PhotoLibraryPermissionError";
+  }
+}
+
 export function getErrorMessage(error: unknown) {
   if (error instanceof ApiError) {
     if (error.code === "EMPTY_QUERY" || error.status === 400) {

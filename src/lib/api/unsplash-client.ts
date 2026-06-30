@@ -9,8 +9,12 @@ type UnsplashPhotoResponse = {
   width: number;
   height: number;
   urls: {
+    full: string;
     regular: string;
     small: string;
+  };
+  links: {
+    download_location: string;
   };
   user: {
     name: string;
@@ -39,6 +43,8 @@ function mapPhoto(photo: UnsplashPhotoResponse): UnsplashPhoto {
     id: photo.id,
     altDescription: photo.alt_description,
     description: photo.description,
+    downloadLocation: photo.links.download_location,
+    fullImageUrl: photo.urls.full,
     width: photo.width,
     height: photo.height,
     imageUrl: photo.urls.regular,

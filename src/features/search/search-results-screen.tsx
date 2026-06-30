@@ -1,13 +1,13 @@
 import type React from "react";
-import { Galeria } from "@nandorojo/galeria";
 import { FlashList } from "@shopify/flash-list";
-import { useDeferredValue } from "react";
+import { useDeferredValue, useState } from "react";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { Pressable, View } from "react-native";
 import { Image } from "expo-image";
 import { ChevronLeft } from "lucide-react-native";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import Animated from "react-native-reanimated";
+import { SearchPhotoViewer } from "@/features/search/components/search-photo-viewer";
 import { useSearchPhotosQuery } from "@/features/search/hooks/use-search-photos-query";
 import { AppText } from "@/lib/components/app-text";
 import { EmptyState } from "@/lib/components/empty-state";
@@ -43,6 +43,7 @@ const BackToFeedButton: React.FC = () => {
 
 type SearchGridItemProps = {
   index: number;
+  onOpen: (index: number) => void;
   photo: UnsplashPhoto;
 };
 
@@ -51,30 +52,47 @@ const getPhotoAccessibilityLabel = (photo: UnsplashPhoto) =>
   photo.description ??
   `Photo by ${photo.photographer.name}`;
 
-const SearchGridItem: React.FC<SearchGridItemProps> = ({ index, photo }) => {
+const SearchGridItem: React.FC<SearchGridItemProps> = ({
+  index,
+  onOpen,
+  photo,
+}) => {
   const entranceStyle = useEntranceAnimation({
     delay: Math.min(index % 12, 8) * 24,
     distance: 12,
   });
+  const photoLabel = getPhotoAccessibilityLabel(photo);
 
   return (
     <AnimatedView style={[styles.gridItem, entranceStyle]}>
-      <Galeria.Image index={index} style={styles.gridSurface}>
-        <StyledImage
-          accessibilityLabel={getPhotoAccessibilityLabel(photo)}
-          contentFit="cover"
-          recyclingKey={photo.id}
-          source={{ uri: photo.thumbUrl }}
-          style={styles.gridImage}
-          transition={180}
-        />
-      </Galeria.Image>
+      <View style={styles.gridSurface}>
+        <Pressable
+          accessibilityHint="Opens the image in a full screen viewer with save controls."
+          accessibilityLabel={`Open ${photoLabel}`}
+          accessibilityRole="button"
+          onPress={() => onOpen(index)}
+          style={({ pressed }) => [
+            styles.gridViewerTarget,
+            pressed && styles.gridPressed,
+          ]}
+        >
+          <StyledImage
+            accessibilityLabel={photoLabel}
+            contentFit="cover"
+            recyclingKey={photo.id}
+            source={{ uri: photo.thumbUrl }}
+            style={styles.gridImage}
+            transition={180}
+          />
+        </Pressable>
+      </View>
     </AnimatedView>
   );
 };
 
 const SearchResultsScreen: React.FC = () => {
-  const { theme } = useUnistyles();
+  const [viewerIndex, setViewerIndex] = useState(0);
+  const [viewerVisible, setViewerVisible] = useState(false);
   const params = useLocalSearchParams<{ query?: string }>();
   const query = params.query ?? "";
   const deferredQuery = useDeferredValue(query);
@@ -90,9 +108,12 @@ const SearchResultsScreen: React.FC = () => {
 
   const pages = data?.pages ?? [];
   const photos = pages.flatMap((page) => page.photos);
-  const galleryUrls = photos.map((photo) => photo.imageUrl);
   const totalResults = pages[0]?.totalResults ?? 0;
   const normalizedTitle = deferredQuery.trim() || "Search";
+  const openViewer = (photoIndex: number) => {
+    setViewerIndex(photoIndex);
+    setViewerVisible(true);
+  };
 
   return (
     <View style={styles.root}>
@@ -104,58 +125,68 @@ const SearchResultsScreen: React.FC = () => {
         }}
       />
 
-      <Galeria theme={theme.isDark ? "dark" : "light"} urls={galleryUrls}>
-        <StyledFlashList
-          ListHeaderComponent={
-            <View style={styles.header}>
-              <SectionHeader
-                subtitle={
-                  totalResults > 0
-                    ? `${formatCompactNumber(totalResults)} results ready to browse`
-                    : "Browse a clean grid of photo results"
-                }
-                title={normalizedTitle}
-              />
+      <StyledFlashList
+        ListHeaderComponent={
+          <View style={styles.header}>
+            <SectionHeader
+              subtitle={
+                totalResults > 0
+                  ? `${formatCompactNumber(totalResults)} results ready to browse`
+                  : "Browse a clean grid of photo results"
+              }
+              title={normalizedTitle}
+            />
+          </View>
+        }
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={styles.content}
+        data={photos}
+        keyExtractor={(item) => item.id}
+        ListEmptyComponent={
+          isPending ? (
+            <LoadingState message={`Searching for “${normalizedTitle}”...`} />
+          ) : error ? (
+            <ErrorState message={getErrorMessage(error)} onRetry={() => void refetch()} />
+          ) : (
+            <EmptyState
+              message="Try another collection name or a more specific scene."
+              title="No photos found"
+            />
+          )
+        }
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <LoadingState message="Loading more results..." />
+          ) : !hasNextPage && photos.length > 0 ? (
+            <View style={styles.footer}>
+              <AppText tone="muted" variant="bodySmall">You made it to the end of the results.</AppText>
             </View>
+          ) : null
+        }
+        numColumns={3}
+        onEndReached={() => {
+          if (!hasNextPage || isFetchingNextPage) {
+            return;
           }
-          contentInsetAdjustmentBehavior="automatic"
-          contentContainerStyle={styles.content}
-          data={photos}
-          keyExtractor={(item) => item.id}
-          ListEmptyComponent={
-            isPending ? (
-              <LoadingState message={`Searching for “${normalizedTitle}”...`} />
-            ) : error ? (
-              <ErrorState message={getErrorMessage(error)} onRetry={() => void refetch()} />
-            ) : (
-              <EmptyState
-                message="Try another collection name or a more specific scene."
-                title="No photos found"
-              />
-            )
-          }
-          ListFooterComponent={
-            isFetchingNextPage ? (
-              <LoadingState message="Loading more results..." />
-            ) : !hasNextPage && photos.length > 0 ? (
-              <View style={styles.footer}>
-                <AppText tone="muted" variant="bodySmall">You made it to the end of the results.</AppText>
-              </View>
-            ) : null
-          }
-          numColumns={3}
-          onEndReached={() => {
-            if (!hasNextPage || isFetchingNextPage) {
-              return;
-            }
 
-            void fetchNextPage();
-          }}
-          onEndReachedThreshold={0.65}
-          renderItem={({ index, item }) => <SearchGridItem index={index} photo={item} />}
-          showsVerticalScrollIndicator={false}
-        />
-      </Galeria>
+          void fetchNextPage();
+        }}
+        onEndReachedThreshold={0.65}
+        renderItem={({ index, item }) => (
+          <SearchGridItem
+            index={index}
+            onOpen={openViewer}
+            photo={item}
+          />
+        )}
+        showsVerticalScrollIndicator={false}
+      />
+      <SearchPhotoViewer
+        initialIndex={viewerIndex}
+        onClose={() => setViewerVisible(false)}
+        photos={photos}
+        visible={viewerVisible}
+      />
     </View>
   );
 };

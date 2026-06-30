@@ -9,6 +9,8 @@ export type UnsplashPhoto = {
   id: string;
   altDescription: string | null;
   description: string | null;
+  downloadLocation: string;
+  fullImageUrl: string;
   width: number;
   height: number;
   imageUrl: string;

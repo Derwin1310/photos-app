@@ -1,8 +1,8 @@
 import type React from "react";
 import { memo, useEffect, useState } from "react";
-import { Pressable, View } from "react-native";
+import { ActivityIndicator, Pressable, View } from "react-native";
 import { Image } from "expo-image";
-import { Heart, MapPin } from "lucide-react-native";
+import { Download, Heart, MapPin } from "lucide-react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import Animated, {
@@ -14,6 +14,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { AppText } from "@/lib/components/app-text";
+import { usePhotoDownload } from "@/lib/hooks/use-photo-download";
 import { motion } from "@/lib/motion/motion";
 import { useEntranceAnimation } from "@/lib/motion/use-entrance-animation";
 import type { UnsplashPhoto } from "@/lib/types/photos";
@@ -35,6 +36,8 @@ const FeedCardBase: React.FC<FeedCardProps> = ({ index = 0, photo }) => {
   const likeScale = useSharedValue(1);
   const reducedMotion = useReducedMotion();
   const { theme } = useUnistyles();
+  const { downloadingPhotoId, downloadPhoto } = usePhotoDownload();
+  const isDownloading = downloadingPhotoId === photo.id;
   const entranceStyle = useEntranceAnimation({
     delay: Math.min(index, 6) * 36,
     distance: 18,
@@ -156,10 +159,40 @@ const FeedCardBase: React.FC<FeedCardProps> = ({ index = 0, photo }) => {
         </View>
       </GestureDetector>
 
-      <AppText selectable tone="muted" variant="bodySmall">
-        Photo by {photo.photographer.name} (@{photo.photographer.username}) on
-        Unsplash
-      </AppText>
+      <View style={styles.mediaFooter}>
+        <AppText
+          numberOfLines={2}
+          selectable
+          style={styles.credit}
+          tone="muted"
+          variant="bodySmall"
+        >
+          Photo by {photo.photographer.name} (@{photo.photographer.username}) on
+          Unsplash
+        </AppText>
+        <Pressable
+          accessibilityLabel="Save image to device"
+          accessibilityRole="button"
+          accessibilityState={{ busy: isDownloading, disabled: isDownloading }}
+          disabled={isDownloading}
+          hitSlop={8}
+          onPress={() => void downloadPhoto(photo)}
+          style={({ pressed }) => [
+            styles.saveButton,
+            pressed && styles.saveButtonPressed,
+            isDownloading && styles.saveButtonDisabled,
+          ]}
+        >
+          {isDownloading ? (
+            <ActivityIndicator color={theme.colors.textSecondary} size="small" />
+          ) : (
+            <Download color={theme.colors.textSecondary} size={theme.size.iconSm} strokeWidth={2.3} />
+          )}
+          <AppText style={styles.saveButtonLabel} variant="bodySmall">
+            {isDownloading ? "Saving" : "Save"}
+          </AppText>
+        </Pressable>
+      </View>
     </AnimatedView>
   );
 };

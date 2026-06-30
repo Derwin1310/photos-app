@@ -5,7 +5,8 @@ export const styles = StyleSheet.create((theme) => ({
   content: { paddingBottom: theme.space.xxxl, paddingHorizontal: theme.layout.screenGutter },
   footer: { alignItems: "center", paddingVertical: theme.space.md },
   gridItem: { flex: 1, paddingBottom: theme.space.sm, paddingHorizontal: theme.space.xxs },
-  gridImage: { aspectRatio: 3 / 4, width: "100%" },
+  gridImage: { height: "100%", width: "100%" },
+  gridPressed: { opacity: 0.86 },
   gridSurface: {
     aspectRatio: 3 / 4,
     backgroundColor: theme.colors.imagePlaceholder,
@@ -16,6 +17,7 @@ export const styles = StyleSheet.create((theme) => ({
     overflow: "hidden",
     width: "100%",
   },
+  gridViewerTarget: { height: "100%", width: "100%" },
   header: { gap: theme.space.xs, paddingBottom: theme.space.lg, paddingTop: theme.space.lg },
   list: { flex: 1 },
   loading: { alignItems: "center", paddingVertical: theme.space.md },
