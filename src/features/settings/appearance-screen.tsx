@@ -161,10 +161,6 @@ const AppearanceScreen: React.FC = () => {
     <SafeAreaView style={styles.root}>
       <View style={styles.content}>
         <SectionHeader
-          subtitle={t("settings.preferencesSubtitle")}
-          title={t("settings.preferencesTitle")}
-        />
-        <SectionHeader
           subtitle={t("settings.appearanceSubtitle")}
           title={t("settings.appearanceTitle")}
         />
@@ -184,7 +180,7 @@ const AppearanceScreen: React.FC = () => {
             );
           })}
         </View>
-        {savedPreference ? (
+        {savedPreference && (
           <SavedNotice
             label={
               t("settings.appearanceSaved", {
@@ -194,7 +190,7 @@ const AppearanceScreen: React.FC = () => {
               })
             }
           />
-        ) : null}
+        )}
         <SectionHeader
           subtitle={t("settings.languageSubtitle")}
           title={t("settings.languageTitle")}
@@ -215,7 +211,7 @@ const AppearanceScreen: React.FC = () => {
             );
           })}
         </View>
-        {savedLanguage ? (
+        {savedLanguage && (
           <SavedNotice
             label={t("settings.languageSaved", {
               label:
@@ -223,7 +219,7 @@ const AppearanceScreen: React.FC = () => {
                 t("common.selected"),
             })}
           />
-        ) : null}
+        )}
       </View>
     </SafeAreaView>
   );

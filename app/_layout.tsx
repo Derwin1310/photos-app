@@ -85,7 +85,7 @@ const RootNavigator: React.FC = () => {
               contentStyle: { backgroundColor: theme.colors.background },
               headerShown: false,
               presentation: Platform.OS === "ios" ? "formSheet" : "modal",
-              sheetAllowedDetents: [0.42],
+              sheetAllowedDetents: "fitToContents",
               sheetGrabberVisible: true,
             }}
           />
