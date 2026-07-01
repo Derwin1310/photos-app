@@ -19,8 +19,20 @@
           "imageWidth": 180
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-localization",
+        {
+          "supportedLocales": {
+            "ios": ["en", "es"],
+            "android": ["en", "es"]
+          }
+        }
+      ]
     ],
+    "locales": {
+      "es": "./src/i18n/native/es.json"
+    },
     "experiments": {
       "typedRoutes": true
     },
@@ -33,6 +45,7 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
+        "CFBundleAllowMixedLocalizations": true,
         "NSCameraUsageDescription": "Capture photos to save them to your personal gallery.",
         "NSPhotoLibraryAddUsageDescription": "Save captured photos to your library.",
         "NSPhotoLibraryUsageDescription": "Allow access when you choose to save or share photos."

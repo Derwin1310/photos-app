@@ -2,6 +2,7 @@ import { File, Paths } from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
 import { saveToLibraryAsync } from "expo-media-library/legacy";
 import { Platform } from "react-native";
+import i18n from "@/i18n/i18n";
 import type { UnsplashPhoto } from "@/lib/types/photos";
 import { getUnsplashAccessKey } from "@/lib/utils/env";
 import { ApiError, PhotoLibraryPermissionError } from "@/lib/utils/errors";
@@ -26,7 +27,7 @@ const trackUnsplashDownload = async (photo: UnsplashPhoto) => {
   });
 
   if (!response.ok) {
-    throw new ApiError("Could not register this Unsplash download.", response.status);
+    throw new ApiError(i18n.t("errors.unsplashDownload"), response.status);
   }
 
   const data = (await response.json()) as UnsplashDownloadResponse;

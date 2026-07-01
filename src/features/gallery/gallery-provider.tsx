@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import type { GalleryPhoto } from "@/lib/types/gallery";
+import i18n from "@/i18n/i18n";
 import {
   buildGalleryPhoto,
   loadGalleryPhotos,
@@ -78,7 +79,7 @@ export const GalleryProvider: React.FC<GalleryProviderProps> = ({ children }) =>
           setError(
             galleryError instanceof Error
               ? galleryError.message
-              : "Could not load your saved gallery.",
+              : i18n.t("gallery.couldNotLoadGallery"),
           );
           setHydrated(true);
         });
@@ -128,7 +129,7 @@ export const GalleryProvider: React.FC<GalleryProviderProps> = ({ children }) =>
       setError(
         galleryError instanceof Error
           ? galleryError.message
-          : "Could not save your photo.",
+          : i18n.t("gallery.couldNotSavePhoto"),
       );
       throw galleryError;
     }
@@ -146,7 +147,7 @@ export const GalleryProvider: React.FC<GalleryProviderProps> = ({ children }) =>
       setError(
         galleryError instanceof Error
           ? galleryError.message
-          : "Could not delete that photo.",
+          : i18n.t("gallery.couldNotDelete"),
       );
       throw galleryError;
     }
@@ -165,7 +166,7 @@ export const GalleryProvider: React.FC<GalleryProviderProps> = ({ children }) =>
       setError(
         galleryError instanceof Error
           ? galleryError.message
-          : "Could not restore that photo.",
+          : i18n.t("gallery.couldNotRestore"),
       );
       throw galleryError;
     }
@@ -189,7 +190,7 @@ export const GalleryProvider: React.FC<GalleryProviderProps> = ({ children }) =>
       setError(
         galleryError instanceof Error
           ? galleryError.message
-          : "Could not update that caption.",
+          : i18n.t("gallery.couldNotSaveCaption"),
       );
       throw galleryError;
     }

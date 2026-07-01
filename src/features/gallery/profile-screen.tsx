@@ -7,6 +7,7 @@ import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import * as Haptics from "expo-haptics";
 import * as Sharing from "expo-sharing";
 import { Camera, LogOut, MessageCircle, Pencil, Share2, Trash2 } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 import Animated from "react-native-reanimated";
 import { images } from "@/assets/images";
 import { useAuth, type AuthUser } from "@/features/auth/auth-provider";
@@ -28,8 +29,8 @@ const StyledImage = withUnistyles(Image);
 const StyledFlashList = withUnistyles(FlashList) as typeof FlashList;
 
 const profileStats = [
-  { icon: Camera, label: "Captures", value: "captures" },
-  { icon: MessageCircle, label: "Captioned", value: "captioned" },
+  { icon: Camera, labelKey: "gallery.captures", value: "captures" },
+  { icon: MessageCircle, labelKey: "gallery.captioned", value: "captioned" },
 ] as const;
 
 type GalleryPhotoCardProps = {
@@ -45,6 +46,7 @@ const GalleryPhotoCard: React.FC<GalleryPhotoCardProps> = ({
   item,
   sharePhoto,
 }) => {
+  const { t } = useTranslation();
   const entranceStyle = useEntranceAnimation({
     delay: Math.min(index, 6) * 34,
     distance: 14,
@@ -62,16 +64,16 @@ const GalleryPhotoCard: React.FC<GalleryPhotoCardProps> = ({
         <View style={styles.info}>
           <View>
             <AppText variant="title">
-              {item.caption || "Untitled memory"}
+              {item.caption || t("gallery.untitledMemory")}
             </AppText>
             <AppText tone="muted" variant="bodySmall">
-              Updated {formatGalleryDate(item.updatedAt)}
+              {t("gallery.updatedDate", { date: formatGalleryDate(item.updatedAt) })}
             </AppText>
           </View>
           <View style={styles.actions}>
             <AppButton
               icon={Pencil}
-              label="Edit"
+              label={t("common.edit")}
               onPress={() =>
                 router.push({
                   pathname: "/(modals)/edit-photo",
@@ -83,14 +85,14 @@ const GalleryPhotoCard: React.FC<GalleryPhotoCardProps> = ({
             />
             <IconButton
               icon={Share2}
-              label="Share photo"
+              label={t("gallery.sharePhoto")}
               onPress={() => void sharePhoto(item.uri)}
               size="sm"
               variant="surface"
             />
             <IconButton
               icon={Trash2}
-              label="Delete photo"
+              label={t("gallery.deletePhoto")}
               onPress={() => void confirmDelete(item)}
               size="sm"
               variant="danger"
@@ -116,6 +118,7 @@ const GalleryListHeader: React.FC<GalleryListHeaderProps> = ({
   user,
 }) => {
   const { theme } = useUnistyles();
+  const { t } = useTranslation();
 
   const statValues = {
     captioned: photos.filter((photo) => photo.caption.trim().length > 0).length,
@@ -128,16 +131,16 @@ const GalleryListHeader: React.FC<GalleryListHeaderProps> = ({
     <AnimatedView style={[styles.header, headerEntranceStyle]}>
       <View style={styles.accountPanel}>
         <View style={styles.accountCopy}>
-          <AppText variant="title">Account</AppText>
+          <AppText variant="title">{t("gallery.accountTitle")}</AppText>
           <AppText numberOfLines={1} tone="muted" variant="bodySmall">
-            {user?.email ?? "Google account connected"}
+            {user?.email ?? t("gallery.fallbackEmail")}
           </AppText>
         </View>
         <AppButton
           accessibilityState={{ busy: isSigningOut, disabled: isSigningOut }}
           disabled={isSigningOut}
           icon={LogOut}
-          label={isSigningOut ? "Signing out..." : "Log out"}
+          label={isSigningOut ? t("gallery.signingOut") : t("gallery.logout")}
           onPress={onLogout}
           size="sm"
           variant="tertiary"
@@ -153,18 +156,18 @@ const GalleryListHeader: React.FC<GalleryListHeaderProps> = ({
           />
           <View style={styles.profileInfo}>
             <AppText numberOfLines={1} variant="headline">
-              {user?.name ?? "PicXplorer user"}
+              {user?.name ?? t("gallery.fallbackName")}
             </AppText>
             <AppText tone="muted" variant="bodySmall">
-              Your personal gallery dashboard for camera saves and captions.
+              {t("gallery.profileSubtitle")}
             </AppText>
           </View>
         </View>
 
         <View style={styles.statRow}>
-          {profileStats.map(({ icon: Icon, label, value }, index) => (
+          {profileStats.map(({ icon: Icon, labelKey, value }, index) => (
             <View
-              key={label}
+              key={labelKey}
               style={styles.stat(index)}
             >
               <Icon
@@ -182,7 +185,7 @@ const GalleryListHeader: React.FC<GalleryListHeaderProps> = ({
                 {formatCompactNumber(statValues[value])}
               </AppText>
               <AppText tone="muted" variant="bodySmall">
-                {label}
+                {t(labelKey)}
               </AppText>
             </View>
           ))}
@@ -190,14 +193,15 @@ const GalleryListHeader: React.FC<GalleryListHeaderProps> = ({
       </View>
 
       <SectionHeader
-        subtitle="Your camera saves, captions, and share-ready memories live here."
-        title="Saved captures"
+        subtitle={t("gallery.savedCapturesSubtitle")}
+        title={t("gallery.savedCapturesTitle")}
       />
     </AnimatedView>
   );
 };
 
 const ProfileScreen: React.FC = () => {
+  const { t } = useTranslation();
   const { isSigningOut, signOut, user } = useAuth();
   const { deletePhoto, error, hydrated, photos, restorePhoto } = useGallery();
 
@@ -206,35 +210,38 @@ const ProfileScreen: React.FC = () => {
       const canShare = await Sharing.isAvailableAsync();
 
       if (!canShare) {
-        Alert.alert("Sharing unavailable", "This device cannot share photos.");
+        Alert.alert(
+          t("gallery.sharingUnavailableTitle"),
+          t("gallery.sharingUnavailableMessage"),
+        );
         return;
       }
 
       await Sharing.shareAsync(uri);
     } catch (shareError) {
       Alert.alert(
-        "Share failed",
-        shareError instanceof Error ? shareError.message : "Could not share that photo.",
+        t("gallery.shareFailed"),
+        shareError instanceof Error ? shareError.message : t("gallery.couldNotShare"),
       );
     }
   };
 
   const confirmDelete = async (photo: GalleryPhoto) => {
-    Alert.alert("Delete photo?", "This will remove it from your local gallery.", [
-      { style: "cancel", text: "Keep it" },
+    Alert.alert(t("gallery.deleteTitle"), t("gallery.deleteMessage"), [
+      { style: "cancel", text: t("gallery.keepIt") },
       {
         style: "destructive",
-        text: "Delete",
+        text: t("common.delete"),
         onPress: async () => {
           try {
             await deletePhoto(photo.id);
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(
               () => undefined,
             );
-            Alert.alert("Photo deleted", "You can restore it if that was a mistake.", [
-              { style: "cancel", text: "Done" },
+            Alert.alert(t("gallery.deletedTitle"), t("gallery.deletedMessage"), [
+              { style: "cancel", text: t("common.done") },
               {
-                text: "Undo",
+                text: t("gallery.undo"),
                 onPress: () => {
                   restorePhoto(photo)
                     .then(() =>
@@ -244,10 +251,10 @@ const ProfileScreen: React.FC = () => {
                     )
                     .catch((restoreError) => {
                       Alert.alert(
-                        "Restore failed",
+                        t("gallery.restoreFailed"),
                         restoreError instanceof Error
                           ? restoreError.message
-                          : "Could not restore that photo.",
+                          : t("gallery.couldNotRestore"),
                       );
                     });
                 },
@@ -255,10 +262,10 @@ const ProfileScreen: React.FC = () => {
             ]);
           } catch (deleteError) {
             Alert.alert(
-              "Delete failed",
+              t("gallery.deleteFailed"),
               deleteError instanceof Error
                 ? deleteError.message
-                : "Could not delete that photo.",
+                : t("gallery.couldNotDelete"),
             );
           }
         },
@@ -269,7 +276,7 @@ const ProfileScreen: React.FC = () => {
   if (!hydrated) {
     return (
       <View style={styles.centered}>
-        <LoadingState message="Loading your saved captures..." />
+        <LoadingState message={t("gallery.loading")} />
       </View>
     );
   }
@@ -298,8 +305,8 @@ const ProfileScreen: React.FC = () => {
       keyExtractor={(item) => item.id}
       ListEmptyComponent={
         <EmptyState
-          message="Capture something from the camera tab and it will show up here with edit, share, and delete actions."
-          title="Your profile is waiting for its first capture"
+          message={t("gallery.emptyMessage")}
+          title={t("gallery.emptyTitle")}
         />
       }
       ItemSeparatorComponent={() => <View style={styles.separator} />}

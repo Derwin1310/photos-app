@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { Image } from "expo-image";
+import { useTranslation } from "react-i18next";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import Animated from "react-native-reanimated";
 import { useGallery } from "@/features/gallery/gallery-provider";
@@ -41,6 +42,7 @@ const InlineError: React.FC<InlineErrorProps> = ({ message }) => {
 
 const EditPhotoScreen: React.FC = () => {
   const params = useLocalSearchParams<{ mode?: string; photoId?: string }>();
+  const { t } = useTranslation();
   const {
     addPhoto,
     clearDraftPhoto,
@@ -76,8 +78,8 @@ const EditPhotoScreen: React.FC = () => {
         <ErrorState
           message={
             isDraftMode
-              ? "There is no captured draft waiting for a caption."
-              : "That photo could not be found in your gallery."
+              ? t("gallery.missingDraft")
+              : t("gallery.missingPhoto")
           }
         />
       </View>
@@ -99,7 +101,7 @@ const EditPhotoScreen: React.FC = () => {
 
         if (!mediaPermission.granted) {
           throw new Error(
-            "Allow photo library access to save this capture to your device and PicXplorer profile.",
+            t("gallery.photoLibraryPermission"),
           );
         }
 
@@ -111,7 +113,7 @@ const EditPhotoScreen: React.FC = () => {
         );
       } else {
         if (!photo) {
-          throw new Error("That photo could not be found in your gallery.");
+          throw new Error(t("gallery.missingPhoto"));
         }
 
         await updatePhoto(photo.id, caption);
@@ -121,19 +123,19 @@ const EditPhotoScreen: React.FC = () => {
       }
 
       Alert.alert(
-        isDraftMode ? "Saved to profile" : "Caption updated",
+        isDraftMode ? t("gallery.savedToProfileTitle") : t("gallery.captionUpdatedTitle"),
         isDraftMode
-          ? "Your capture is ready in your profile."
-          : "Your updated caption is saved.",
-        [{ text: "Done", onPress: () => router.back() }],
+          ? t("gallery.savedToProfileMessage")
+          : t("gallery.captionUpdatedMessage"),
+        [{ text: t("common.done"), onPress: () => router.back() }],
       );
     } catch (updateError) {
       setError(
         updateError instanceof Error
           ? updateError.message
           : isDraftMode
-            ? "Could not save this photo."
-            : "Could not save the new caption.",
+            ? t("gallery.couldNotSavePhoto")
+            : t("gallery.couldNotSaveCaption"),
       );
     } finally {
       setIsSaving(false);
@@ -145,7 +147,11 @@ const EditPhotoScreen: React.FC = () => {
       behavior={Platform.select({ ios: "padding", default: "height" })}
       style={styles.root}
     >
-      <Stack.Screen options={{ title: isDraftMode ? "Caption photo" : "Edit photo" }} />
+      <Stack.Screen
+        options={{
+          title: isDraftMode ? t("gallery.addCaptionTitle") : t("gallery.editPhoto"),
+        }}
+      />
       <Pressable
         onPress={Keyboard.dismiss}
         style={styles.screen}
@@ -159,15 +165,15 @@ const EditPhotoScreen: React.FC = () => {
           />
 
           <View style={styles.form}>
-            <AppText variant="title">Caption</AppText>
+            <AppText variant="title">{t("camera.addCaption")}</AppText>
             <TextInput
               maxLength={120}
               multiline
               onChangeText={handleCaptionChange}
               placeholder={
                 isDraftMode
-                  ? "Tell the story behind this moment"
-                  : "Write a new caption"
+                  ? t("gallery.captionPlaceholderDraft")
+                  : t("gallery.captionPlaceholderEdit")
               }
               placeholderTextColor={theme.colors.placeholder}
               style={styles.input}
@@ -175,7 +181,7 @@ const EditPhotoScreen: React.FC = () => {
               value={caption}
             />
             <AppText tone="muted" variant="bodySmall">
-              {caption.length}/120 characters
+              {t("gallery.characterCount", { count: caption.length })}
             </AppText>
           </View>
 
@@ -185,7 +191,7 @@ const EditPhotoScreen: React.FC = () => {
 
           <View style={styles.actions}>
             <AppButton
-              label="Cancel"
+              label={t("common.cancel")}
               onPress={() => {
                 Keyboard.dismiss();
                 router.back();
@@ -193,7 +199,13 @@ const EditPhotoScreen: React.FC = () => {
               variant="secondary"
             />
             <AppButton
-              label={isSaving ? "Saving..." : isDraftMode ? "Save photo" : "Save"}
+              label={
+                isSaving
+                  ? t("common.saving")
+                  : isDraftMode
+                    ? t("gallery.savePhoto")
+                    : t("common.save")
+              }
               disabled={isSaving}
               onPress={saveChanges}
               variant="primary"

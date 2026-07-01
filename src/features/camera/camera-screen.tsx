@@ -6,6 +6,7 @@ import { Image } from "expo-image";
 import * as Haptics from "expo-haptics";
 import { router, useFocusEffect } from "expo-router";
 import { Circle, Flashlight, FlashlightOff, RotateCcw, Trash2, Type } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import Animated, {
   useAnimatedStyle,
@@ -34,6 +35,7 @@ const CameraScreen: React.FC = () => {
   const [screenFocused, setScreenFocused] = useState(true);
   const [torchEnabled, setTorchEnabled] = useState(false);
   const cameraRef = useRef<CameraView>(null);
+  const { t } = useTranslation();
   const { theme } = useUnistyles();
   const { clearDraftPhoto, createDraftPhoto, draftPhoto } = useGallery();
   const reducedMotion = useReducedMotion();
@@ -83,11 +85,11 @@ const CameraScreen: React.FC = () => {
   };
 
   const discardPhoto = () => {
-    Alert.alert("Discard photo?", "This capture will be removed.", [
-      { style: "cancel", text: "Keep editing" },
+    Alert.alert(t("camera.discardTitle"), t("camera.discardMessage"), [
+      { style: "cancel", text: t("camera.keepEditing") },
       {
         style: "destructive",
-        text: "Discard",
+        text: t("camera.discard"),
         onPress: () => {
           clearDraftPhoto();
           Haptics.notificationAsync(
@@ -102,7 +104,7 @@ const CameraScreen: React.FC = () => {
     return (
       <View style={styles.checking}>
         <AppText center tone="inverse">
-          Checking camera access...
+          {t("camera.checkingAccess")}
         </AppText>
       </View>
     );
@@ -112,8 +114,8 @@ const CameraScreen: React.FC = () => {
     return (
       <View style={styles.permission}>
         <ErrorState
-          actionLabel="Grant camera access"
-          message="Camera access lets you capture a photo and save it into your local gallery."
+          actionLabel={t("camera.grantAccess")}
+          message={t("camera.permissionMessage")}
           onRetry={() => void requestPermission()}
         />
       </View>
@@ -134,8 +136,7 @@ const CameraScreen: React.FC = () => {
             <View>
               <View style={styles.message}>
                 <AppText center tone="inverse" variant="bodySmall">
-                  Continue to the caption sheet to name this moment and save it to
-                  your gallery.
+                  {t("camera.draftMessage")}
                 </AppText>
               </View>
             </View>
@@ -144,14 +145,14 @@ const CameraScreen: React.FC = () => {
               <View style={styles.draftRow}>
                 <IconButton
                   icon={Trash2}
-                  label="Discard photo"
+                  label={t("camera.discardPhoto")}
                   onPress={discardPhoto}
                   showLabel
                   variant="overlay"
                 />
                 <IconButton
                   icon={Type}
-                  label="Add caption"
+                  label={t("camera.addCaption")}
                   onPress={() =>
                     router.push({
                       pathname: "/(modals)/edit-photo",
@@ -180,7 +181,7 @@ const CameraScreen: React.FC = () => {
             <View style={styles.topControl}>
               <IconButton
                 icon={torchEnabled ? Flashlight : FlashlightOff}
-                label={torchEnabled ? "Torch on" : "Torch off"}
+                label={torchEnabled ? t("camera.torchOn") : t("camera.torchOff")}
                 onPress={() => setTorchEnabled((value) => !value)}
                 variant="overlay"
               />
@@ -188,21 +189,20 @@ const CameraScreen: React.FC = () => {
 
             <View style={styles.tutorial}>
               <AppText center style={styles.tutorialText} tone="inverse">
-                Capture a moment, then add a caption before saving it to your
-                journal.
+                {t("camera.captureHint")}
               </AppText>
 
               <View style={styles.captureRow}>
                 <IconButton
                   icon={RotateCcw}
-                  label="Flip camera"
+                  label={t("camera.flipCamera")}
                   onPress={() =>
                     setFacing((value) => (value === "back" ? "front" : "back"))
                   }
                   variant="overlay"
                 />
                 <AnimatedPressable
-                  accessibilityLabel="Capture photo"
+                  accessibilityLabel={t("camera.capturePhoto")}
                   accessibilityRole="button"
                   accessibilityState={{ disabled: isCapturing }}
                   disabled={isCapturing}

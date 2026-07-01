@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Pressable, TextInput, View } from "react-native";
 import { router, useNavigation } from "expo-router";
 import { Search } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import Animated from "react-native-reanimated";
 import { CollectionStrip } from "@/features/feed/components/collection-strip";
@@ -25,6 +26,7 @@ const StyledFlashList = withUnistyles(FlashList) as typeof FlashList;
 
 const FeedListHeader: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const { t } = useTranslation();
   const { theme } = useUnistyles();
   const headerEntranceStyle = useEntranceAnimation({ distance: 10 });
 
@@ -44,19 +46,19 @@ const FeedListHeader: React.FC = () => {
   return (
     <AnimatedView style={[styles.header, headerEntranceStyle]}>
       <SectionHeader
-        subtitle="Fresh photographs from people and places worth noticing."
-        title="Discover"
+        subtitle={t("feed.discoverSubtitle")}
+        title={t("feed.discoverTitle")}
       />
       <View style={styles.searchCard}>
         <View style={styles.searchInputRow}>
           <AppIcon color={theme.colors.textTertiary} icon={Search} size={theme.size.iconMd} />
           <TextInput
-            accessibilityLabel="Search photo collections"
+            accessibilityLabel={t("feed.searchAccessibility")}
             autoCapitalize="none"
             autoCorrect={false}
             onChangeText={setSearchQuery}
             onSubmitEditing={submitSearch}
-            placeholder="Search collections, moods, or scenes"
+            placeholder={t("feed.searchPlaceholder")}
             placeholderTextColor={theme.colors.placeholder}
             returnKeyType="search"
             style={styles.searchInput}
@@ -64,7 +66,7 @@ const FeedListHeader: React.FC = () => {
           />
         </View>
         <Pressable
-          accessibilityLabel="Search collections"
+          accessibilityLabel={t("feed.searchButton")}
           accessibilityRole="button"
           accessibilityState={{ disabled: !trimmedSearchQuery }}
           disabled={!trimmedSearchQuery}
@@ -83,7 +85,7 @@ const FeedListHeader: React.FC = () => {
             ]}
             variant="bodySmall"
           >
-            Search
+            {t("common.search")}
           </AppText>
         </Pressable>
       </View>
@@ -94,6 +96,7 @@ const FeedListHeader: React.FC = () => {
 
 const FeedScreen: React.FC = () => {
   const listRef = useRef<FlashListRef<UnsplashPhoto>>(null);
+  const { t } = useTranslation();
 
   const navigation = useNavigation();
 
@@ -149,18 +152,18 @@ const FeedScreen: React.FC = () => {
       keyExtractor={(item) => item.id}
       ListEmptyComponent={
         <EmptyState
-          message="The feed is quiet right now. Pull again for a fresh batch."
-          title="No photos yet"
+          message={t("feed.emptyMessage")}
+          title={t("feed.emptyTitle")}
         />
       }
       ListFooterComponent={
         isFetchingNextPage ? (
           <View style={styles.loadingFooter}>
-            <LoadingState message="Fetching more inspiration..." />
+            <LoadingState message={t("feed.loadingMore")} />
           </View>
         ) : !hasNextPage ? (
           <View style={styles.footer}>
-            <SectionHeader subtitle="You are up to date." title="That is everything" />
+            <SectionHeader subtitle={t("feed.footerSubtitle")} title={t("feed.footerTitle")} />
           </View>
         ) : null
       }

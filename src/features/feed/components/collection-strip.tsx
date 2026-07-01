@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { Image } from "expo-image";
 import { Pressable, View } from "react-native";
 import { withUnistyles } from "react-native-unistyles";
+import { useTranslation } from "react-i18next";
 import Animated, {
   useAnimatedStyle,
   useReducedMotion,
@@ -33,6 +34,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
   index,
   preview,
 }) => {
+  const { t } = useTranslation();
   const reducedMotion = useReducedMotion();
   const pressScale = useSharedValue(1);
   const entranceStyle = useEntranceAnimation({
@@ -45,7 +47,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
 
   return (
     <AnimatedPressable
-      accessibilityHint={`Browse ${collection} photos`}
+      accessibilityHint={t("feed.browseCollection", { collection })}
       accessibilityRole="button"
       onPress={() =>
         router.push({
@@ -82,11 +84,12 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
 };
 
 export const CollectionStrip: React.FC = () => {
+  const { t } = useTranslation();
   const collectionPreviews = useCollectionPreviews();
 
   return (
     <View style={styles.root}>
-      <SectionHeader subtitle="Browse a visual mood." title="Collections" />
+      <SectionHeader subtitle={t("feed.collectionsSubtitle")} title={t("feed.collectionsTitle")} />
       <StyledFlashList
         contentContainerStyle={styles.list}
         data={collectionPreviews}

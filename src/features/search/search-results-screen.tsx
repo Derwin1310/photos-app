@@ -5,6 +5,7 @@ import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { Pressable, View } from "react-native";
 import { Image } from "expo-image";
 import { ChevronLeft } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import Animated from "react-native-reanimated";
 import { SearchPhotoViewer } from "@/features/search/components/search-photo-viewer";
@@ -26,11 +27,12 @@ const StyledFlashList = withUnistyles(FlashList) as typeof FlashList;
 
 const BackToFeedButton: React.FC = () => {
   const { theme } = useUnistyles();
+  const { t } = useTranslation();
 
   return (
     <Link asChild dismissTo href="/feed">
       <Pressable
-        accessibilityLabel="Back to feed"
+        accessibilityLabel={t("search.backToFeed")}
         accessibilityRole="button"
         hitSlop={10}
         style={styles.backButton}
@@ -47,28 +49,32 @@ type SearchGridItemProps = {
   photo: UnsplashPhoto;
 };
 
-const getPhotoAccessibilityLabel = (photo: UnsplashPhoto) =>
+const getPhotoAccessibilityLabel = (photo: UnsplashPhoto, fallback: string) =>
   photo.altDescription ??
   photo.description ??
-  `Photo by ${photo.photographer.name}`;
+  fallback;
 
 const SearchGridItem: React.FC<SearchGridItemProps> = ({
   index,
   onOpen,
   photo,
 }) => {
+  const { t } = useTranslation();
   const entranceStyle = useEntranceAnimation({
     delay: Math.min(index % 12, 8) * 24,
     distance: 12,
   });
-  const photoLabel = getPhotoAccessibilityLabel(photo);
+  const photoLabel = getPhotoAccessibilityLabel(
+    photo,
+    t("search.photoBy", { name: photo.photographer.name }),
+  );
 
   return (
     <AnimatedView style={[styles.gridItem, entranceStyle]}>
       <View style={styles.gridSurface}>
         <Pressable
-          accessibilityHint="Opens the image in a full screen viewer with save controls."
-          accessibilityLabel={`Open ${photoLabel}`}
+          accessibilityHint={t("search.openPhotoHint")}
+          accessibilityLabel={t("search.openPhoto", { label: photoLabel })}
           accessibilityRole="button"
           onPress={() => onOpen(index)}
           style={({ pressed }) => [
@@ -91,6 +97,7 @@ const SearchGridItem: React.FC<SearchGridItemProps> = ({
 };
 
 const SearchResultsScreen: React.FC = () => {
+  const { t } = useTranslation();
   const [viewerIndex, setViewerIndex] = useState(0);
   const [viewerVisible, setViewerVisible] = useState(false);
   const params = useLocalSearchParams<{ query?: string }>();
@@ -109,7 +116,7 @@ const SearchResultsScreen: React.FC = () => {
   const pages = data?.pages ?? [];
   const photos = pages.flatMap((page) => page.photos);
   const totalResults = pages[0]?.totalResults ?? 0;
-  const normalizedTitle = deferredQuery.trim() || "Search";
+  const normalizedTitle = deferredQuery.trim() || t("navigation.search");
   const openViewer = (photoIndex: number) => {
     setViewerIndex(photoIndex);
     setViewerVisible(true);
@@ -131,8 +138,8 @@ const SearchResultsScreen: React.FC = () => {
             <SectionHeader
               subtitle={
                 totalResults > 0
-                  ? `${formatCompactNumber(totalResults)} results ready to browse`
-                  : "Browse a clean grid of photo results"
+                  ? t("search.resultsReady", { formattedCount: formatCompactNumber(totalResults) })
+                  : t("search.browseGrid")
               }
               title={normalizedTitle}
             />
@@ -144,22 +151,22 @@ const SearchResultsScreen: React.FC = () => {
         keyExtractor={(item) => item.id}
         ListEmptyComponent={
           isPending ? (
-            <LoadingState message={`Searching for “${normalizedTitle}”...`} />
+            <LoadingState message={t("search.searchingFor", { query: normalizedTitle })} />
           ) : error ? (
             <ErrorState message={getErrorMessage(error)} onRetry={() => void refetch()} />
           ) : (
             <EmptyState
-              message="Try another collection name or a more specific scene."
-              title="No photos found"
+              message={t("search.noPhotosMessage")}
+              title={t("search.noPhotosTitle")}
             />
           )
         }
         ListFooterComponent={
           isFetchingNextPage ? (
-            <LoadingState message="Loading more results..." />
+            <LoadingState message={t("search.loadingMore")} />
           ) : !hasNextPage && photos.length > 0 ? (
             <View style={styles.footer}>
-              <AppText tone="muted" variant="bodySmall">You made it to the end of the results.</AppText>
+              <AppText tone="muted" variant="bodySmall">{t("search.endMessage")}</AppText>
             </View>
           ) : null
         }

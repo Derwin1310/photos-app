@@ -5,6 +5,7 @@ import { Auth0Provider } from "react-native-auth0";
 import { AuthProvider } from "@/features/auth/auth-provider";
 import { getAuth0Config } from "@/features/auth/auth-config";
 import { AppearanceProvider } from "@/features/settings/appearance-provider";
+import { LanguageProvider } from "@/i18n/language-provider";
 import { queryClient } from "@/lib/query-client";
 import { GalleryProvider } from "@/features/gallery/gallery-provider";
 import { styles } from "./app-providers.styles";
@@ -19,9 +20,11 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
       <Auth0Provider domain={authConfig.domain} clientId={authConfig.clientId}>
         <AuthProvider>
           <QueryClientProvider client={queryClient}>
-            <AppearanceProvider>
-              <GalleryProvider>{children}</GalleryProvider>
-            </AppearanceProvider>
+            <LanguageProvider>
+              <AppearanceProvider>
+                <GalleryProvider>{children}</GalleryProvider>
+              </AppearanceProvider>
+            </LanguageProvider>
           </QueryClientProvider>
         </AuthProvider>
       </Auth0Provider>

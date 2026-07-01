@@ -1,5 +1,6 @@
 import type React from "react";
 import { View } from "react-native";
+import { useTranslation } from "react-i18next";
 import Animated from "react-native-reanimated";
 import { AppButton } from "@/lib/components/app-button";
 import { AppText } from "@/lib/components/app-text";
@@ -16,19 +17,20 @@ type ErrorStateProps = {
 
 export const ErrorState: React.FC<ErrorStateProps> = ({
   message,
-  actionLabel = "Try again",
+  actionLabel,
   onRetry,
 }) => {
+  const { t } = useTranslation();
   const entranceStyle = useEntranceAnimation({ distance: 8 });
 
   return (
     <AnimatedView style={[styles.card, entranceStyle]}>
-      <AppText variant="headline">A small hiccup</AppText>
+      <AppText variant="headline">{t("states.errorTitle")}</AppText>
       <AppText selectable tone="muted">
         {message}
       </AppText>
       {onRetry ? (
-        <AppButton label={actionLabel} onPress={onRetry} size="sm" />
+        <AppButton label={actionLabel ?? t("common.tryAgain")} onPress={onRetry} size="sm" />
       ) : null}
     </AnimatedView>
   );

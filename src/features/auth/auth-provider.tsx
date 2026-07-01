@@ -1,6 +1,7 @@
 import type React from "react";
 import { createContext, use, useState } from "react";
 import { useAuth0, type User } from "react-native-auth0";
+import { useTranslation } from "react-i18next";
 import {
   AUTH0_GOOGLE_CONNECTION,
   AUTH0_SCOPE,
@@ -29,7 +30,10 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 type AuthProviderProps = React.PropsWithChildren;
 
-const normalizeUser = (user: User | null | undefined): AuthUser | null => {
+const normalizeUser = (
+  user: User | null | undefined,
+  fallbackName: string,
+): AuthUser | null => {
   if (!user?.sub) {
     return null;
   }
@@ -37,7 +41,7 @@ const normalizeUser = (user: User | null | undefined): AuthUser | null => {
   return {
     email: user.email,
     id: user.sub,
-    name: user.name ?? user.nickname ?? user.email ?? "PicXplorer user",
+    name: user.name ?? user.nickname ?? user.email ?? fallbackName,
     picture: user.picture,
   };
 };
@@ -56,11 +60,12 @@ const getAuthErrorMessage = (error: unknown, fallback: string) => {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const { authorize, clearSession, error, isLoading, user } = useAuth0();
+  const { t } = useTranslation();
   const [actionError, setActionError] = useState<string | null>(null);
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const authConfig = getAuth0Config();
-  const authUser = normalizeUser(user);
+  const authUser = normalizeUser(user, t("auth.defaultUser"));
 
   const signInWithGoogle = async () => {
     setIsSigningIn(true);
@@ -77,7 +82,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       );
     } catch (signInError) {
       setActionError(
-        getAuthErrorMessage(signInError, "Could not sign in with Google."),
+        getAuthErrorMessage(signInError, t("auth.signInError")),
       );
     } finally {
       setIsSigningIn(false);
@@ -91,7 +96,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await clearSession({}, { customScheme: authConfig.scheme });
     } catch (signOutError) {
-      setActionError(getAuthErrorMessage(signOutError, "Could not sign out."));
+      setActionError(getAuthErrorMessage(signOutError, t("auth.signOutError")));
     } finally {
       setIsSigningOut(false);
     }

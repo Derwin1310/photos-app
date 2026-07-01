@@ -4,6 +4,7 @@ import { ActivityIndicator, Pressable, View } from "react-native";
 import { Image } from "expo-image";
 import { Download, Heart, MapPin } from "lucide-react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { useTranslation } from "react-i18next";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import Animated, {
   useAnimatedStyle,
@@ -32,6 +33,7 @@ type FeedCardProps = {
 
 const FeedCardBase: React.FC<FeedCardProps> = ({ index = 0, photo }) => {
   const [liked, setLiked] = useState(false);
+  const { t } = useTranslation();
   const heartScale = useSharedValue(0);
   const likeScale = useSharedValue(1);
   const reducedMotion = useReducedMotion();
@@ -100,12 +102,12 @@ const FeedCardBase: React.FC<FeedCardProps> = ({ index = 0, photo }) => {
         />
         <View style={styles.details}>
           <AppText variant="title">
-            {photo.photographer.name || "Anonymous"}
+            {photo.photographer.name || t("feed.anonymous")}
           </AppText>
           <View style={styles.location}>
             <MapPin color={theme.colors.textTertiary} size={theme.size.iconXs} strokeWidth={2.2} />
             <AppText tone="muted" variant="bodySmall">
-              {photo.photographer.location || "Somewhere worth wandering"}
+              {photo.photographer.location || t("feed.somewhere")}
             </AppText>
           </View>
         </View>
@@ -114,12 +116,12 @@ const FeedCardBase: React.FC<FeedCardProps> = ({ index = 0, photo }) => {
       <View style={styles.storyLine}>
         <View style={styles.storyDot} />
         <AppText style={styles.storyLabel} variant="label">
-          Fresh perspective
+          {t("feed.freshPerspective")}
         </AppText>
       </View>
 
       <AppText>
-        {photo.description || photo.altDescription || "No caption needed today."}
+        {photo.description || photo.altDescription || t("feed.noCaption")}
       </AppText>
 
       <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
@@ -142,7 +144,7 @@ const FeedCardBase: React.FC<FeedCardProps> = ({ index = 0, photo }) => {
             </View>
           </AnimatedView>
           <AnimatedPressable
-            accessibilityLabel={liked ? "Unlike photo" : "Like photo"}
+            accessibilityLabel={liked ? t("feed.unlikePhoto") : t("feed.likePhoto")}
             accessibilityRole="button"
             accessibilityState={{ selected: liked }}
             hitSlop={8}
@@ -167,11 +169,13 @@ const FeedCardBase: React.FC<FeedCardProps> = ({ index = 0, photo }) => {
           tone="muted"
           variant="bodySmall"
         >
-          Photo by {photo.photographer.name} (@{photo.photographer.username}) on
-          Unsplash
+          {t("feed.photoCredit", {
+            name: photo.photographer.name,
+            username: photo.photographer.username,
+          })}
         </AppText>
         <Pressable
-          accessibilityLabel="Save image to device"
+          accessibilityLabel={t("downloads.saveImage")}
           accessibilityRole="button"
           accessibilityState={{ busy: isDownloading, disabled: isDownloading }}
           disabled={isDownloading}
@@ -189,7 +193,7 @@ const FeedCardBase: React.FC<FeedCardProps> = ({ index = 0, photo }) => {
             <Download color={theme.colors.textSecondary} size={theme.size.iconSm} strokeWidth={2.3} />
           )}
           <AppText style={styles.saveButtonLabel} variant="bodySmall">
-            {isDownloading ? "Saving" : "Save"}
+            {isDownloading ? t("common.saving") : t("common.save")}
           </AppText>
         </Pressable>
       </View>

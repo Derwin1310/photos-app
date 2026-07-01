@@ -1,3 +1,5 @@
+import i18n from "@/i18n/i18n";
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -11,7 +13,7 @@ export class ApiError extends Error {
 
 export class PhotoLibraryPermissionError extends Error {
   constructor(
-    message = "Allow PicXplorer to save images to your photo library.",
+    message = i18n.t("downloads.photoAccessMessage"),
     public readonly canOpenSettings = true,
   ) {
     super(message);
@@ -22,19 +24,19 @@ export class PhotoLibraryPermissionError extends Error {
 export function getErrorMessage(error: unknown) {
   if (error instanceof ApiError) {
     if (error.code === "EMPTY_QUERY" || error.status === 400) {
-      return "Enter a collection, mood, or scene to search.";
+      return i18n.t("errors.emptyQuery");
     }
 
     if (error.status === 401 || error.status === 403) {
-      return "PicXplorer could not reach Unsplash with the current access key. Check EXPO_PUBLIC_UNSPLASH_ACCESS_KEY and try again.";
+      return i18n.t("errors.unsplashAuth");
     }
 
     if (error.status === 429) {
-      return "Unsplash is rate limiting requests right now. Wait a moment, then try again.";
+      return i18n.t("errors.unsplashRateLimited");
     }
 
     if (error.status >= 500) {
-      return "Unsplash is having trouble right now. Try again in a little bit.";
+      return i18n.t("errors.unsplashServer");
     }
 
     return error.message;
@@ -44,5 +46,5 @@ export function getErrorMessage(error: unknown) {
     return error.message;
   }
 
-  return "Something went wrong. Please try again.";
+  return i18n.t("errors.generic");
 }

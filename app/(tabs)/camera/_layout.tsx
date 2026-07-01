@@ -1,5 +1,8 @@
 import { TabStack } from "@/lib/navigation/tab-stack";
+import { useTranslation } from "react-i18next";
 
 export default function CameraTabLayout() {
-  return <TabStack headerShown={false} title="Camera" />;
+  const { t } = useTranslation();
+
+  return <TabStack headerShown={false} title={t("navigation.camera")} />;
 }

@@ -10,6 +10,7 @@ import { AppProviders } from "@/providers/app-providers";
 import { Platform, View } from "react-native";
 import { useAuth } from "@/features/auth/auth-provider";
 import { LoadingState } from "@/lib/components/loading-state";
+import { useTranslation } from "react-i18next";
 
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
 SplashScreen.setOptions({ duration: 250, fade: true });
@@ -17,6 +18,7 @@ SplashScreen.setOptions({ duration: 250, fade: true });
 const RootNavigator: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const { theme } = useUnistyles();
+  const { t } = useTranslation();
   const baseNavigationTheme = theme.isDark ? DarkTheme : DefaultTheme;
   const navigationTheme = {
     ...baseNavigationTheme,
@@ -36,7 +38,7 @@ const RootNavigator: React.FC = () => {
       <ThemeProvider value={navigationTheme}>
         <StatusBar style={theme.isDark ? "light" : "dark"} />
         <View style={{ backgroundColor: theme.colors.background, flex: 1 }}>
-          <LoadingState message="Checking your session..." />
+          <LoadingState message={t("auth.checkingSession")} />
         </View>
       </ThemeProvider>
     );
@@ -66,13 +68,13 @@ const RootNavigator: React.FC = () => {
           <Stack.Screen
             name="search/[query]"
             options={{
-              title: "Search",
+              title: t("navigation.search"),
             }}
           />
           <Stack.Screen
             name="(modals)/edit-photo"
             options={{
-              title: "Edit photo",
+              title: t("navigation.editPhoto"),
               presentation: "fullScreenModal",
               contentStyle: { backgroundColor: theme.colors.background },
             }}
@@ -88,7 +90,7 @@ const RootNavigator: React.FC = () => {
             }}
           />
         </Stack.Protected>
-        <Stack.Screen name="+not-found" options={{ title: "Not found" }} />
+        <Stack.Screen name="+not-found" options={{ title: t("navigation.notFound") }} />
       </Stack>
     </ThemeProvider>
   );

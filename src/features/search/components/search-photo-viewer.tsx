@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { Download, X } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import { AppIcon } from "@/lib/components/app-icon";
 import { AppText } from "@/lib/components/app-text";
@@ -28,10 +29,10 @@ type SearchPhotoViewerProps = {
   visible: boolean;
 };
 
-const getPhotoLabel = (photo: UnsplashPhoto) =>
+const getPhotoLabel = (photo: UnsplashPhoto, fallback: string) =>
   photo.altDescription ??
   photo.description ??
-  `Photo by ${photo.photographer.name}`;
+  fallback;
 
 export const SearchPhotoViewer: React.FC<SearchPhotoViewerProps> = ({
   initialIndex,
@@ -41,6 +42,7 @@ export const SearchPhotoViewer: React.FC<SearchPhotoViewerProps> = ({
 }) => {
   const { width } = useWindowDimensions();
   const { theme } = useUnistyles();
+  const { t } = useTranslation();
   const listRef = useRef<FlatList<UnsplashPhoto>>(null);
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const { downloadingPhotoId, downloadPhoto } = usePhotoDownload();
@@ -100,7 +102,10 @@ export const SearchPhotoViewer: React.FC<SearchPhotoViewerProps> = ({
           renderItem={({ item }) => (
             <View style={styles.page(width)}>
               <StyledImage
-                accessibilityLabel={getPhotoLabel(item)}
+                accessibilityLabel={getPhotoLabel(
+                  item,
+                  t("search.photoBy", { name: item.photographer.name }),
+                )}
                 contentFit="contain"
                 recyclingKey={`${item.id}-viewer`}
                 source={{ uri: item.imageUrl }}
@@ -114,7 +119,7 @@ export const SearchPhotoViewer: React.FC<SearchPhotoViewerProps> = ({
 
         <View style={styles.topBar}>
           <Pressable
-            accessibilityLabel="Close full screen image viewer"
+            accessibilityLabel={t("search.closeViewer")}
             accessibilityRole="button"
             hitSlop={10}
             onPress={onClose}
@@ -130,14 +135,17 @@ export const SearchPhotoViewer: React.FC<SearchPhotoViewerProps> = ({
         <View style={styles.bottomBar}>
           <View style={styles.viewerDetails}>
             <AppText numberOfLines={1} style={styles.viewerTitle} variant="title">
-              {currentPhoto?.photographer.name ?? "Unsplash photo"}
+              {currentPhoto?.photographer.name ?? t("search.unsplashPhoto")}
             </AppText>
             <AppText numberOfLines={1} style={styles.viewerSubtitle} variant="bodySmall">
-              {currentIndex + 1} of {photos.length}
+              {t("search.viewerPosition", {
+                current: currentIndex + 1,
+                total: photos.length,
+              })}
             </AppText>
           </View>
           <Pressable
-            accessibilityLabel="Save image to device"
+            accessibilityLabel={t("downloads.saveImage")}
             accessibilityRole="button"
             accessibilityState={{ busy: isDownloading, disabled: isDownloading }}
             disabled={isDownloading || !currentPhoto}
@@ -155,7 +163,7 @@ export const SearchPhotoViewer: React.FC<SearchPhotoViewerProps> = ({
               <AppIcon color={theme.colors.text} icon={Download} size={theme.size.iconSm} />
             )}
             <AppText style={styles.saveButtonLabel} variant="bodySmall">
-              {isDownloading ? "Saving" : "Save"}
+              {isDownloading ? t("common.saving") : t("common.save")}
             </AppText>
           </Pressable>
         </View>

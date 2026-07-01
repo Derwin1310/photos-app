@@ -1,0 +1,11 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "PicXplorer",
+    "NSCameraUsageDescription": "Captura fotos para guardarlas en tu galería personal.",
+    "NSPhotoLibraryAddUsageDescription": "Guarda fotos en tu fototeca.",
+    "NSPhotoLibraryUsageDescription": "Permite el acceso cuando elijas guardar o compartir fotos."
+  },
+  "android": {
+    "app_name": "PicXplorer"
+  }
+}

@@ -1,6 +1,7 @@
 import type React from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import { Image } from "expo-image";
+import { useTranslation } from "react-i18next";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import Animated, {
   useAnimatedStyle,
@@ -43,6 +44,7 @@ const GoogleIcon: React.FC = () => (
 
 const WelcomeScreen: React.FC = () => {
   const { errorMessage, isSigningIn, signInWithGoogle } = useAuth();
+  const { t } = useTranslation();
   const { theme } = useUnistyles();
   const reducedMotion = useReducedMotion();
   const pressScale = useSharedValue(1);
@@ -67,28 +69,27 @@ const WelcomeScreen: React.FC = () => {
 
           <View style={styles.copy}>
             <AppText style={styles.title} tone="inverse" variant="headline">
-              A personal gallery for the places and people you notice.
+              {t("welcome.heroTitle")}
             </AppText>
             <AppText tone="inverse" variant="bodySmall">
-              Browse editorial collections, capture a new frame, and keep the
-              moments that matter close.
+              {t("welcome.heroBody")}
             </AppText>
           </View>
 
           {errorMessage ? (
             <View accessibilityLiveRegion="polite" style={styles.errorPanel}>
               <AppText style={styles.errorTitle} variant="title">
-                Sign-in did not finish
+                {t("welcome.errorTitle")}
               </AppText>
               <AppText style={styles.errorMessage} variant="bodySmall">
-                {errorMessage} Try again, or check your connection before reopening Google.
+                {t("welcome.errorMessage", { message: errorMessage })}
               </AppText>
             </View>
           ) : null}
 
           <AnimatedPressable
-            accessibilityLabel="Sign in with Google"
-            accessibilityHint="Opens Google sign-in in Auth0, then returns to PicXplorer."
+            accessibilityLabel={t("welcome.signInLabel")}
+            accessibilityHint={t("welcome.signInHint")}
             accessibilityRole="button"
             accessibilityState={{ busy: isSigningIn, disabled: isSigningIn }}
             disabled={isSigningIn}
@@ -118,7 +119,7 @@ const WelcomeScreen: React.FC = () => {
               <GoogleIcon />
             )}
             <AppText style={styles.signInLabel}>
-              {isSigningIn ? "Opening Google..." : "Sign in with Google"}
+              {isSigningIn ? t("welcome.signInLoading") : t("welcome.signInLabel")}
             </AppText>
           </AnimatedPressable>
         </AnimatedView>

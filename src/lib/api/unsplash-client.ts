@@ -1,4 +1,5 @@
 import { getUnsplashAccessKey } from "@/lib/utils/env";
+import i18n from "@/i18n/i18n";
 import { ApiError } from "@/lib/utils/errors";
 import type { UnsplashPhoto, UnsplashSearchPage } from "@/lib/types/photos";
 
@@ -78,7 +79,7 @@ async function requestJson<T>(
   });
 
   if (!response.ok) {
-    let message = "Unsplash request failed.";
+    let message: string = i18n.t("errors.unsplashFailed");
 
     try {
       const data = (await response.json()) as { errors?: string[] };
@@ -115,7 +116,7 @@ export async function fetchSearchPhotos(
   const normalizedQuery = query.trim();
 
   if (!normalizedQuery) {
-    throw new ApiError("Search query cannot be empty.", 400, "EMPTY_QUERY");
+    throw new ApiError(i18n.t("errors.emptyQuery"), 400, "EMPTY_QUERY");
   }
 
   const response = await requestJson<UnsplashSearchResponse>(

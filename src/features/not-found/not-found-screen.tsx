@@ -1,21 +1,25 @@
 import type React from "react";
 import { router } from "expo-router";
 import { View } from "react-native";
+import { useTranslation } from "react-i18next";
 import { AppButton } from "@/lib/components/app-button";
 import { AppText } from "@/lib/components/app-text";
 import { styles } from "./not-found-screen.styles";
 
-const NotFoundScreen: React.FC = () => (
-  <View style={styles.screen}>
-    <View style={styles.card}>
-      <AppText variant="headline">That page wandered off</AppText>
-      <AppText tone="muted">
-        The route you requested is not available. You can head back to the home
-        screen and keep exploring from there.
-      </AppText>
-      <AppButton label="Back home" onPress={() => router.replace("/")} />
+const NotFoundScreen: React.FC = () => {
+  const { t } = useTranslation();
+
+  return (
+    <View style={styles.screen}>
+      <View style={styles.card}>
+        <AppText variant="headline">{t("states.notFoundTitle")}</AppText>
+        <AppText tone="muted">
+          {t("states.notFoundMessage")}
+        </AppText>
+        <AppButton label={t("states.notFoundBackHome")} onPress={() => router.replace("/")} />
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 export default NotFoundScreen;

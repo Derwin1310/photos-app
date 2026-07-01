@@ -1,6 +1,8 @@
 import type React from "react";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 import Animated, {
   useAnimatedStyle,
   useReducedMotion,
@@ -9,37 +11,22 @@ import Animated, {
 } from "react-native-reanimated";
 import { useAppearance } from "@/features/settings/appearance-provider";
 import type { AppearancePreference } from "@/features/settings/appearance-repository";
+import { useLanguage } from "@/i18n/language-provider";
+import type { LanguagePreference } from "@/i18n/language-repository";
 import { AppText } from "@/lib/components/app-text";
 import { SectionHeader } from "@/lib/components/section-header";
 import { motion } from "@/lib/motion/motion";
 import { useEntranceAnimation } from "@/lib/motion/use-entrance-animation";
 import { styles } from "./appearance-screen.styles";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const AnimatedView = Animated.View;
 
-const appearanceOptions: Array<{
+type PreferenceOption<TValue extends string> = {
   description: string;
   label: string;
-  value: AppearancePreference;
-}> = [
-  {
-    description: "Match the appearance selected in your device settings.",
-    label: "System",
-    value: "system",
-  },
-  {
-    description: "Use a bright, high-contrast gallery surface.",
-    label: "Light",
-    value: "light",
-  },
-  {
-    description: "Use a dimmed interface designed for lower-light viewing.",
-    label: "Dark",
-    value: "dark",
-  },
-];
+  value: TValue;
+};
 
 type AppearanceChoiceProps = {
   description: string;
@@ -111,7 +98,7 @@ const SavedNotice: React.FC<SavedNoticeProps> = ({ label }) => {
       style={[styles.savedNotice, entranceStyle]}
     >
       <AppText style={styles.savedNoticeText} variant="bodySmall">
-        {label} appearance saved on this device.
+        {label}
       </AppText>
     </AnimatedView>
   );
@@ -119,19 +106,67 @@ const SavedNotice: React.FC<SavedNoticeProps> = ({ label }) => {
 
 const AppearanceScreen: React.FC = () => {
   const { preference, setPreference } = useAppearance();
+  const { preference: languagePreference, setPreference: setLanguagePreference } = useLanguage();
+  const { t } = useTranslation();
   const [savedPreference, setSavedPreference] = useState<AppearancePreference | null>(null);
+  const [savedLanguage, setSavedLanguage] = useState<LanguagePreference | null>(null);
+
+  const appearanceOptions: Array<PreferenceOption<AppearancePreference>> = [
+    {
+      description: t("settings.systemAppearanceDescription"),
+      label: t("settings.systemLabel"),
+      value: "system",
+    },
+    {
+      description: t("settings.lightDescription"),
+      label: t("settings.lightLabel"),
+      value: "light",
+    },
+    {
+      description: t("settings.darkDescription"),
+      label: t("settings.darkLabel"),
+      value: "dark",
+    },
+  ];
+
+  const languageOptions: Array<PreferenceOption<LanguagePreference>> = [
+    {
+      description: t("settings.systemLanguageDescription"),
+      label: t("settings.systemLabel"),
+      value: "system",
+    },
+    {
+      description: t("settings.englishDescription"),
+      label: t("settings.englishLabel"),
+      value: "en",
+    },
+    {
+      description: t("settings.spanishDescription"),
+      label: t("settings.spanishLabel"),
+      value: "es",
+    },
+  ];
 
   const choosePreference = (nextPreference: AppearancePreference) => {
     setPreference(nextPreference);
     setSavedPreference(nextPreference);
   };
 
+  const chooseLanguage = (nextPreference: LanguagePreference) => {
+    setLanguagePreference(nextPreference);
+    setSavedLanguage(nextPreference);
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.content}>
         <SectionHeader
-          subtitle="Choose how PicXplorer should look on this device."
-          title="Appearance"
+          subtitle={t("settings.preferencesSubtitle")}
+          title={t("settings.preferencesTitle")}
+        />
+        <SectionHeader
+          subtitle={t("settings.appearanceSubtitle")}
+          title={t("settings.appearanceTitle")}
         />
         <View style={styles.section}>
           {appearanceOptions.map((option, index) => {
@@ -152,9 +187,41 @@ const AppearanceScreen: React.FC = () => {
         {savedPreference ? (
           <SavedNotice
             label={
-              appearanceOptions.find((option) => option.value === savedPreference)?.label ??
-              "Selected"
+              t("settings.appearanceSaved", {
+                label:
+                  appearanceOptions.find((option) => option.value === savedPreference)?.label ??
+                  t("common.selected"),
+              })
             }
+          />
+        ) : null}
+        <SectionHeader
+          subtitle={t("settings.languageSubtitle")}
+          title={t("settings.languageTitle")}
+        />
+        <View style={styles.section}>
+          {languageOptions.map((option, index) => {
+            const selected = languagePreference === option.value;
+
+            return (
+              <AppearanceChoice
+                key={option.value}
+                description={option.description}
+                index={index}
+                label={option.label}
+                onSelect={() => chooseLanguage(option.value)}
+                selected={selected}
+              />
+            );
+          })}
+        </View>
+        {savedLanguage ? (
+          <SavedNotice
+            label={t("settings.languageSaved", {
+              label:
+                languageOptions.find((option) => option.value === savedLanguage)?.label ??
+                t("common.selected"),
+            })}
           />
         ) : null}
       </View>
