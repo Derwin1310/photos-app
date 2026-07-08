@@ -146,7 +146,7 @@ export const en = {
     saveToDevice: "Save to device",
     tab: "Liked",
     title: "Liked",
-    unlike: "Unlike",
+    unlike: "Remove like",
   },
   navigation: {
     appearanceSettings: "Preferences settings",

@@ -198,12 +198,13 @@ const LikedPhotoCard: React.FC<LikedPhotoCardProps> = ({
             size="sm"
             variant="secondary"
           />
-          <IconButton
+          <AppButton
+            fullWidth
             icon={HeartOff}
             label={t("likes.unlike")}
             onPress={() => onRemove(item)}
             size="sm"
-            variant="surface"
+            variant="tertiary"
           />
         </View>
       </View>

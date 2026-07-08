@@ -38,10 +38,9 @@ export const styles = StyleSheet.create((theme) => ({
   },
   info: { flex: 1, gap: theme.space.sm, justifyContent: "space-between", minWidth: 0 },
   likedActions: {
-    alignItems: "center",
-    flexDirection: "row",
+    alignItems: "stretch",
+    flexDirection: "column",
     gap: theme.space.xs,
-    justifyContent: "space-between",
   },
   likedCard: (columnIndex: number) => ({
     backgroundColor: theme.colors.surfaceRaised,
