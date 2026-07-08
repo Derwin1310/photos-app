@@ -8,6 +8,7 @@ import { AppearanceProvider } from "@/features/settings/appearance-provider";
 import { LanguageProvider } from "@/i18n/language-provider";
 import { queryClient } from "@/lib/query-client";
 import { GalleryProvider } from "@/features/gallery/gallery-provider";
+import { LikedPhotosProvider } from "@/features/likes/liked-photos-provider";
 import { styles } from "./app-providers.styles";
 
 type AppProvidersProps = React.PropsWithChildren;
@@ -22,7 +23,9 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
           <QueryClientProvider client={queryClient}>
             <LanguageProvider>
               <AppearanceProvider>
-                <GalleryProvider>{children}</GalleryProvider>
+                <LikedPhotosProvider>
+                  <GalleryProvider>{children}</GalleryProvider>
+                </LikedPhotosProvider>
               </AppearanceProvider>
             </LanguageProvider>
           </QueryClientProvider>

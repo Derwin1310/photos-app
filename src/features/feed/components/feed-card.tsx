@@ -1,5 +1,5 @@
 import type React from "react";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import { Image } from "expo-image";
 import { Download, Heart, MapPin } from "lucide-react-native";
@@ -15,6 +15,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { AppText } from "@/lib/components/app-text";
+import { useLikedPhotos } from "@/features/likes/liked-photos-provider";
 import { usePhotoDownload } from "@/lib/hooks/use-photo-download";
 import { motion } from "@/lib/motion/motion";
 import { useEntranceAnimation } from "@/lib/motion/use-entrance-animation";
@@ -32,13 +33,14 @@ type FeedCardProps = {
 };
 
 const FeedCardBase: React.FC<FeedCardProps> = ({ index = 0, photo }) => {
-  const [liked, setLiked] = useState(false);
   const { t } = useTranslation();
   const heartScale = useSharedValue(0);
   const likeScale = useSharedValue(1);
   const reducedMotion = useReducedMotion();
   const { theme } = useUnistyles();
+  const { isLiked, likePhoto, toggleLike } = useLikedPhotos();
   const { downloadingPhotoId, downloadPhoto } = usePhotoDownload();
+  const liked = isLiked(photo.id);
   const isDownloading = downloadingPhotoId === photo.id;
   const entranceStyle = useEntranceAnimation({
     delay: Math.min(index, 6) * 36,
@@ -77,13 +79,19 @@ const FeedCardBase: React.FC<FeedCardProps> = ({ index = 0, photo }) => {
     }
   }, [likeScale, liked, reducedMotion]);
 
-  const likePhoto = () => setLiked(true);
+  const persistLike = () => {
+    if (liked) {
+      return;
+    }
+
+    void likePhoto(photo).catch(() => undefined);
+  };
 
   const doubleTap = Gesture.Tap()
     .numberOfTaps(2)
     .maxDuration(220)
     .onStart(() => {
-      scheduleOnRN(likePhoto)
+      scheduleOnRN(persistLike);
       heartScale.value = withSequence(
         withSpring(reducedMotion ? 0 : 0.92, { damping: 13, stiffness: 380, mass: 0.55 }),
         withTiming(0, { duration: reducedMotion ? 0 : 110 }),
@@ -148,7 +156,7 @@ const FeedCardBase: React.FC<FeedCardProps> = ({ index = 0, photo }) => {
             accessibilityRole="button"
             accessibilityState={{ selected: liked }}
             hitSlop={8}
-            onPress={() => setLiked((value) => !value)}
+            onPress={() => void toggleLike(photo).catch(() => undefined)}
             style={[styles.likeButton, likeStyle]}
           >
             <Heart
