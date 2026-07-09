@@ -1,5 +1,4 @@
-import type React from "react";
-import { createContext, use, useState } from "react";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useAuth0, type User } from "react-native-auth0";
 import { useTranslation } from "react-i18next";
 import {
@@ -7,6 +6,11 @@ import {
   AUTH0_SCOPE,
   getAuth0Config,
 } from "@/features/auth/auth-config";
+import {
+  authActionErrorAtom,
+  authIsSigningInAtom,
+  authIsSigningOutAtom,
+} from "@/features/auth/auth-atoms";
 
 export type AuthUser = {
   email?: string;
@@ -15,7 +19,7 @@ export type AuthUser = {
   picture?: string;
 };
 
-type AuthContextValue = {
+type AuthState = {
   errorMessage: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -25,10 +29,6 @@ type AuthContextValue = {
   signOut: () => Promise<void>;
   user: AuthUser | null;
 };
-
-const AuthContext = createContext<AuthContextValue | null>(null);
-
-type AuthProviderProps = React.PropsWithChildren;
 
 const normalizeUser = (
   user: User | null | undefined,
@@ -58,12 +58,15 @@ const getAuthErrorMessage = (error: unknown, fallback: string) => {
   return error instanceof Error ? error.message : fallback;
 };
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const useAuth = (): AuthState => {
   const { authorize, clearSession, error, isLoading, user } = useAuth0();
   const { t } = useTranslation();
-  const [actionError, setActionError] = useState<string | null>(null);
-  const [isSigningIn, setIsSigningIn] = useState(false);
-  const [isSigningOut, setIsSigningOut] = useState(false);
+  const actionError = useAtomValue(authActionErrorAtom);
+  const isSigningIn = useAtomValue(authIsSigningInAtom);
+  const isSigningOut = useAtomValue(authIsSigningOutAtom);
+  const setActionError = useSetAtom(authActionErrorAtom);
+  const setIsSigningIn = useSetAtom(authIsSigningInAtom);
+  const setIsSigningOut = useSetAtom(authIsSigningOutAtom);
   const authConfig = getAuth0Config();
   const authUser = normalizeUser(user, t("auth.defaultUser"));
 
@@ -102,7 +105,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const value: AuthContextValue = {
+  return {
     errorMessage: actionError ?? error?.message ?? null,
     isAuthenticated: Boolean(authUser),
     isLoading,
@@ -112,16 +115,4 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signOut,
     user: authUser,
   };
-
-  return <AuthContext value={value}>{children}</AuthContext>;
 };
-
-export function useAuth() {
-  const value = use(AuthContext);
-
-  if (!value) {
-    throw new Error("useAuth must be used inside AuthProvider.");
-  }
-
-  return value;
-}

@@ -1,22 +1,21 @@
-import type React from "react";
+import { useAtomValue, useSetAtom } from "jotai";
 import {
-  createContext,
-  startTransition,
-  use,
-  useEffect,
-  useState,
-} from "react";
+  addGalleryPhotoAtom,
+  clearDraftPhotoAtom,
+  createDraftPhotoAtom,
+  deleteGalleryPhotoAtom,
+  galleryDraftPhotoAtom,
+  galleryErrorAtom,
+  galleryHydratedAtom,
+  galleryPhotosAtom,
+  restoreGalleryPhotoAtom,
+  updateDraftCaptionAtom,
+  updateGalleryPhotoAtom,
+  type DraftPhoto,
+} from "@/features/gallery/gallery-atoms";
 import type { GalleryPhoto } from "@/lib/types/gallery";
-import i18n from "@/i18n/i18n";
-import {
-  buildGalleryPhoto,
-  loadGalleryPhotos,
-  saveGalleryPhotos,
-} from "@/features/gallery/gallery-repository";
 
-type DraftPhoto = { caption: string; uri: string };
-
-type GalleryContextValue = {
+type GalleryState = {
   clearDraftPhoto: () => void;
   createDraftPhoto: (uri: string) => void;
   draftPhoto: DraftPhoto | null;
@@ -31,172 +30,20 @@ type GalleryContextValue = {
   updatePhoto: (photoId: string, caption: string) => Promise<void>;
 };
 
-const GalleryContext = createContext<GalleryContextValue | null>(null);
+export const useGallery = (): GalleryState => {
+  const draftPhoto = useAtomValue(galleryDraftPhotoAtom);
+  const error = useAtomValue(galleryErrorAtom);
+  const hydrated = useAtomValue(galleryHydratedAtom);
+  const photos = useAtomValue(galleryPhotosAtom);
+  const addPhoto = useSetAtom(addGalleryPhotoAtom);
+  const clearDraftPhoto = useSetAtom(clearDraftPhotoAtom);
+  const createDraftPhoto = useSetAtom(createDraftPhotoAtom);
+  const deletePhoto = useSetAtom(deleteGalleryPhotoAtom);
+  const restorePhoto = useSetAtom(restoreGalleryPhotoAtom);
+  const updateDraftCaption = useSetAtom(updateDraftCaptionAtom);
+  const updatePhoto = useSetAtom(updateGalleryPhotoAtom);
 
-const commitPhotos = async (
-  nextPhotos: GalleryPhoto[],
-  rollback: () => void,
-  apply: (photos: GalleryPhoto[]) => void,
-) => {
-  apply(nextPhotos);
-
-  try {
-    await saveGalleryPhotos(nextPhotos);
-  } catch (error) {
-    rollback();
-    throw error;
-  }
-};
-
-type GalleryProviderProps = React.PropsWithChildren;
-
-export const GalleryProvider: React.FC<GalleryProviderProps> = ({ children }) => {
-  const [draftPhoto, setDraftPhoto] = useState<DraftPhoto | null>(null);
-  const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
-  const [hydrated, setHydrated] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let mounted = true;
-
-    loadGalleryPhotos()
-      .then((loadedPhotos) => {
-        if (!mounted) {
-          return;
-        }
-
-        startTransition(() => {
-          setPhotos(loadedPhotos);
-          setHydrated(true);
-        });
-      })
-      .catch((galleryError) => {
-        if (!mounted) {
-          return;
-        }
-
-        startTransition(() => {
-          setError(
-            galleryError instanceof Error
-              ? galleryError.message
-              : i18n.t("gallery.couldNotLoadGallery"),
-          );
-          setHydrated(true);
-        });
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  const applyPhotos = (nextPhotos: GalleryPhoto[]) => {
-    startTransition(() => {
-      setPhotos(nextPhotos);
-      setError(null);
-    });
-  };
-
-  const createDraftPhoto = (uri: string) => {
-    startTransition(() => {
-      setDraftPhoto({ caption: "", uri });
-      setError(null);
-    });
-  };
-
-  const clearDraftPhoto = () => {
-    startTransition(() => {
-      setDraftPhoto(null);
-    });
-  };
-
-  const updateDraftCaption = (caption: string) => {
-    startTransition(() => {
-      setDraftPhoto((currentDraft) =>
-        currentDraft ? { ...currentDraft, caption } : currentDraft,
-      );
-    });
-  };
-
-  const addPhoto = async (uri: string, caption: string) => {
-    const newPhoto = buildGalleryPhoto(uri, caption.trim());
-    const previousPhotos = photos;
-    const nextPhotos = [newPhoto, ...previousPhotos];
-
-    try {
-      await commitPhotos(nextPhotos, () => applyPhotos(previousPhotos), applyPhotos);
-    } catch (galleryError) {
-      setError(
-        galleryError instanceof Error
-          ? galleryError.message
-          : i18n.t("gallery.couldNotSavePhoto"),
-      );
-      throw galleryError;
-    }
-
-    return newPhoto;
-  };
-
-  const deletePhoto = async (photoId: string) => {
-    const previousPhotos = photos;
-    const nextPhotos = previousPhotos.filter((photo) => photo.id !== photoId);
-
-    try {
-      await commitPhotos(nextPhotos, () => applyPhotos(previousPhotos), applyPhotos);
-    } catch (galleryError) {
-      setError(
-        galleryError instanceof Error
-          ? galleryError.message
-          : i18n.t("gallery.couldNotDelete"),
-      );
-      throw galleryError;
-    }
-  };
-
-  const restorePhoto = async (photo: GalleryPhoto) => {
-    const previousPhotos = photos;
-    const nextPhotos = [
-      photo,
-      ...previousPhotos.filter((currentPhoto) => currentPhoto.id !== photo.id),
-    ];
-
-    try {
-      await commitPhotos(nextPhotos, () => applyPhotos(previousPhotos), applyPhotos);
-    } catch (galleryError) {
-      setError(
-        galleryError instanceof Error
-          ? galleryError.message
-          : i18n.t("gallery.couldNotRestore"),
-      );
-      throw galleryError;
-    }
-  };
-
-  const updatePhoto = async (photoId: string, caption: string) => {
-    const previousPhotos = photos;
-    const nextPhotos = previousPhotos.map((photo) =>
-      photo.id === photoId
-        ? {
-            ...photo,
-            caption: caption.trim(),
-            updatedAt: new Date().toISOString(),
-          }
-        : photo,
-    );
-
-    try {
-      await commitPhotos(nextPhotos, () => applyPhotos(previousPhotos), applyPhotos);
-    } catch (galleryError) {
-      setError(
-        galleryError instanceof Error
-          ? galleryError.message
-          : i18n.t("gallery.couldNotSaveCaption"),
-      );
-      throw galleryError;
-    }
-  };
-
-  const value: GalleryContextValue = {
+  return {
     clearDraftPhoto,
     createDraftPhoto,
     draftPhoto,
@@ -210,16 +57,4 @@ export const GalleryProvider: React.FC<GalleryProviderProps> = ({ children }) =>
     updateDraftCaption,
     updatePhoto,
   };
-
-  return <GalleryContext value={value}>{children}</GalleryContext>;
 };
-
-export function useGallery() {
-  const value = use(GalleryContext);
-
-  if (!value) {
-    throw new Error("useGallery must be used inside GalleryProvider.");
-  }
-
-  return value;
-}
