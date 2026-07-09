@@ -16,7 +16,7 @@ import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
 import { useUnistyles, withUnistyles } from "react-native-unistyles";
 import Animated from "react-native-reanimated";
-import { useGallery } from "@/features/gallery/gallery-provider";
+import { useGalleryEditor } from "@/features/gallery/gallery-provider";
 import { AppText } from "@/lib/components/app-text";
 import { AppButton } from "@/lib/components/app-button";
 import { ErrorState } from "@/lib/components/error-state";
@@ -50,7 +50,7 @@ const EditPhotoScreen: React.FC = () => {
     getPhoto,
     updateDraftCaption,
     updatePhoto,
-  } = useGallery();
+  } = useGalleryEditor();
   const isDraftMode = params.mode === "draft";
   const photo = params.photoId ? getPhoto(params.photoId) : undefined;
   const sourcePhoto = isDraftMode ? draftPhoto : photo;

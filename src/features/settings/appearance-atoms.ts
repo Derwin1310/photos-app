@@ -56,3 +56,10 @@ export const setAppearancePreferenceAtom = atom(
     saveAppearancePreference(preference).catch(() => undefined);
   },
 );
+
+export const appearancePreferenceStateAtom = atom(
+  (get) => get(appearancePreferenceAtom),
+  (_get, set, preference: AppearancePreference) => {
+    set(setAppearancePreferenceAtom, preference);
+  },
+);

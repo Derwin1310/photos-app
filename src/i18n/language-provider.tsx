@@ -1,9 +1,8 @@
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import {
   languageHydratedAtom,
-  languagePreferenceAtom,
+  languagePreferenceStateAtom,
   resolvedLanguageAtom,
-  setLanguagePreferenceAtom,
 } from "@/i18n/language-atoms";
 import type { SupportedLanguage } from "@/i18n/i18n";
 import type { LanguagePreference } from "@/i18n/language-repository";
@@ -17,9 +16,8 @@ type LanguageState = {
 
 export const useLanguage = (): LanguageState => {
   const isHydrated = useAtomValue(languageHydratedAtom);
-  const preference = useAtomValue(languagePreferenceAtom);
+  const [preference, setPreference] = useAtom(languagePreferenceStateAtom);
   const resolvedLanguage = useAtomValue(resolvedLanguageAtom);
-  const setPreference = useSetAtom(setLanguagePreferenceAtom);
 
   return {
     isHydrated,
@@ -27,4 +25,12 @@ export const useLanguage = (): LanguageState => {
     resolvedLanguage,
     setPreference,
   };
+};
+
+type LanguagePreferenceState = Pick<LanguageState, "preference" | "setPreference">;
+
+export const useLanguagePreference = (): LanguagePreferenceState => {
+  const [preference, setPreference] = useAtom(languagePreferenceStateAtom);
+
+  return { preference, setPreference };
 };

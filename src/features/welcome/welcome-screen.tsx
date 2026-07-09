@@ -11,7 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg";
 import { images } from "@/assets/images";
-import { useAuth } from "@/features/auth/auth-provider";
+import { useGoogleSignIn } from "@/features/auth/auth-provider";
 import { AppText } from "@/lib/components/app-text";
 import { styles } from "./welcome-screen.styles";
 import { motion } from "@/lib/motion/motion";
@@ -43,7 +43,7 @@ const GoogleIcon: React.FC = () => (
 );
 
 const WelcomeScreen: React.FC = () => {
-  const { errorMessage, isSigningIn, signInWithGoogle } = useAuth();
+  const { errorMessage, isSigningIn, signInWithGoogle } = useGoogleSignIn();
   const { t } = useTranslation();
   const { theme } = useUnistyles();
   const reducedMotion = useReducedMotion();

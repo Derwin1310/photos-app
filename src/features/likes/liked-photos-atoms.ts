@@ -13,6 +13,9 @@ export const likedPhotosAtom = atom<LikedPhoto[]>([]);
 export const likedPhotosErrorAtom = atom<string | null>(null);
 export const likedPhotosHydratedAtom = atom(false);
 const likedPhotosHydratingAtom = atom(false);
+export const likedPhotoIdsAtom = atom(
+  (get) => new Set(get(likedPhotosAtom).map((photo) => photo.id)),
+);
 
 const applyLikedPhotosAtom = atom(null, (_get, set, nextPhotos: LikedPhoto[]) => {
   startTransition(() => {

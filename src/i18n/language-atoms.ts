@@ -57,6 +57,13 @@ export const setLanguagePreferenceAtom = atom(
   },
 );
 
+export const languagePreferenceStateAtom = atom(
+  (get) => get(languagePreferenceAtom),
+  (_get, set, preference: LanguagePreference) => {
+    set(setLanguagePreferenceAtom, preference);
+  },
+);
+
 export const refreshSystemLanguageAtom = atom(null, (get, set) => {
   if (get(languagePreferenceAtom) !== "system") {
     return;

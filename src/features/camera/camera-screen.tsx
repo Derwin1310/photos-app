@@ -18,7 +18,7 @@ import Animated, {
 import { IconButton } from "@/lib/components/icon-button";
 import { AppText } from "@/lib/components/app-text";
 import { ErrorState } from "@/lib/components/error-state";
-import { useGallery } from "@/features/gallery/gallery-provider";
+import { useGalleryDraft } from "@/features/gallery/gallery-provider";
 import { motion } from "@/lib/motion/motion";
 import { useEntranceAnimation } from "@/lib/motion/use-entrance-animation";
 import { styles } from "./camera-screen.styles";
@@ -37,7 +37,7 @@ const CameraScreen: React.FC = () => {
   const cameraRef = useRef<CameraView>(null);
   const { t } = useTranslation();
   const { theme } = useUnistyles();
-  const { clearDraftPhoto, createDraftPhoto, draftPhoto } = useGallery();
+  const { clearDraftPhoto, createDraftPhoto, draftPhoto } = useGalleryDraft();
   const reducedMotion = useReducedMotion();
   const draftEntranceStyle = useEntranceAnimation({ distance: 10 });
   const shutterScale = useSharedValue(1);

@@ -9,9 +9,9 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { useAppearance } from "@/features/settings/appearance-provider";
+import { useAppearancePreference } from "@/features/settings/appearance-provider";
 import type { AppearancePreference } from "@/features/settings/appearance-repository";
-import { useLanguage } from "@/i18n/language-provider";
+import { useLanguagePreference } from "@/i18n/language-provider";
 import type { LanguagePreference } from "@/i18n/language-repository";
 import { AppText } from "@/lib/components/app-text";
 import { SectionHeader } from "@/lib/components/section-header";
@@ -105,8 +105,9 @@ const SavedNotice: React.FC<SavedNoticeProps> = ({ label }) => {
 };
 
 const AppearanceScreen: React.FC = () => {
-  const { preference, setPreference } = useAppearance();
-  const { preference: languagePreference, setPreference: setLanguagePreference } = useLanguage();
+  const { preference, setPreference } = useAppearancePreference();
+  const { preference: languagePreference, setPreference: setLanguagePreference } =
+    useLanguagePreference();
   const { t } = useTranslation();
   const [savedPreference, setSavedPreference] = useState<AppearancePreference | null>(null);
   const [savedLanguage, setSavedLanguage] = useState<LanguagePreference | null>(null);

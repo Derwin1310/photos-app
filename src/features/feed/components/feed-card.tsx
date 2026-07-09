@@ -15,7 +15,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { AppText } from "@/lib/components/app-text";
-import { useLikedPhotos } from "@/features/likes/liked-photos-provider";
+import { useLikedPhoto } from "@/features/likes/liked-photos-provider";
 import { usePhotoDownload } from "@/lib/hooks/use-photo-download";
 import { motion } from "@/lib/motion/motion";
 import { useEntranceAnimation } from "@/lib/motion/use-entrance-animation";
@@ -38,9 +38,9 @@ const FeedCardBase: React.FC<FeedCardProps> = ({ index = 0, photo }) => {
   const likeScale = useSharedValue(1);
   const reducedMotion = useReducedMotion();
   const { theme } = useUnistyles();
-  const { isLiked, likePhoto, toggleLike } = useLikedPhotos();
+  const { isLiked, likePhoto, toggleLike } = useLikedPhoto(photo.id);
   const { downloadingPhotoId, downloadPhoto } = usePhotoDownload();
-  const liked = isLiked(photo.id);
+  const liked = isLiked;
   const isDownloading = downloadingPhotoId === photo.id;
   const entranceStyle = useEntranceAnimation({
     delay: Math.min(index, 6) * 36,

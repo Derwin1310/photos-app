@@ -1,9 +1,8 @@
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useUnistyles } from "react-native-unistyles";
 import {
   appearanceHydratedAtom,
-  appearancePreferenceAtom,
-  setAppearancePreferenceAtom,
+  appearancePreferenceStateAtom,
 } from "@/features/settings/appearance-atoms";
 import type { AppearancePreference } from "@/features/settings/appearance-repository";
 
@@ -16,8 +15,7 @@ type AppearanceState = {
 
 export const useAppearance = (): AppearanceState => {
   const isHydrated = useAtomValue(appearanceHydratedAtom);
-  const preference = useAtomValue(appearancePreferenceAtom);
-  const setPreference = useSetAtom(setAppearancePreferenceAtom);
+  const [preference, setPreference] = useAtom(appearancePreferenceStateAtom);
   const { rt } = useUnistyles();
 
   return {
@@ -26,4 +24,12 @@ export const useAppearance = (): AppearanceState => {
     resolvedTheme: rt.themeName === "dark" ? "dark" : "light",
     setPreference,
   };
+};
+
+type AppearancePreferenceState = Pick<AppearanceState, "preference" | "setPreference">;
+
+export const useAppearancePreference = (): AppearancePreferenceState => {
+  const [preference, setPreference] = useAtom(appearancePreferenceStateAtom);
+
+  return { preference, setPreference };
 };

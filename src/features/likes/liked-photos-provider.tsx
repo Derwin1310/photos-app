@@ -1,6 +1,7 @@
 import { useAtomValue, useSetAtom } from "jotai";
 import {
   likePhotoAtom,
+  likedPhotoIdsAtom,
   likedPhotosAtom,
   likedPhotosErrorAtom,
   likedPhotosHydratedAtom,
@@ -18,6 +19,24 @@ type LikedPhotosState = {
   likePhoto: (photo: UnsplashPhoto) => Promise<void>;
   toggleLike: (photo: UnsplashPhoto) => Promise<void>;
   unlikePhoto: (photoId: string) => Promise<void>;
+};
+
+type LikedPhotoState = {
+  isLiked: boolean;
+  likePhoto: (photo: UnsplashPhoto) => Promise<void>;
+  toggleLike: (photo: UnsplashPhoto) => Promise<void>;
+};
+
+export const useLikedPhoto = (photoId: string): LikedPhotoState => {
+  const likedPhotoIds = useAtomValue(likedPhotoIdsAtom);
+  const likePhoto = useSetAtom(likePhotoAtom);
+  const toggleLike = useSetAtom(toggleLikedPhotoAtom);
+
+  return {
+    isLiked: likedPhotoIds.has(photoId),
+    likePhoto,
+    toggleLike,
+  };
 };
 
 export const useLikedPhotos = (): LikedPhotosState => {

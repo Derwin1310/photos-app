@@ -18,8 +18,8 @@ import {
 import { useTranslation } from "react-i18next";
 import Animated from "react-native-reanimated";
 import { images } from "@/assets/images";
-import { useAuth, type AuthUser } from "@/features/auth/auth-provider";
-import { useGallery } from "@/features/gallery/gallery-provider";
+import { useSignOut, type AuthUser } from "@/features/auth/auth-provider";
+import { useGalleryPhotos } from "@/features/gallery/gallery-provider";
 import { useLikedPhotos } from "@/features/likes/liked-photos-provider";
 import type { LikedPhoto } from "@/features/likes/liked-photos-repository";
 import { AppText } from "@/lib/components/app-text";
@@ -391,8 +391,8 @@ const ProfileScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ProfileTab>("captures");
   const [recentlyRemovedPhoto, setRecentlyRemovedPhoto] = useState<LikedPhoto | null>(null);
   const { t } = useTranslation();
-  const { isSigningOut, signOut, user } = useAuth();
-  const { deletePhoto, error, hydrated, photos, restorePhoto } = useGallery();
+  const { isSigningOut, signOut, user } = useSignOut();
+  const { deletePhoto, error, hydrated, photos, restorePhoto } = useGalleryPhotos();
   const {
     error: likedPhotosError,
     hydrated: likedPhotosHydrated,

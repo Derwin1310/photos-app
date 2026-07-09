@@ -15,6 +15,11 @@ export const galleryErrorAtom = atom<string | null>(null);
 export const galleryHydratedAtom = atom(false);
 const galleryHydratingAtom = atom(false);
 export const galleryPhotosAtom = atom<GalleryPhoto[]>([]);
+export const galleryPhotoByIdAtom = atom((get) => {
+  const photos = get(galleryPhotosAtom);
+
+  return (photoId: string) => photos.find((photo) => photo.id === photoId);
+});
 
 const applyGalleryPhotosAtom = atom(null, (_get, set, nextPhotos: GalleryPhoto[]) => {
   startTransition(() => {

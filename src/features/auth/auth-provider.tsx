@@ -1,4 +1,4 @@
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { useAuth0, type User } from "react-native-auth0";
 import { useTranslation } from "react-i18next";
 import {
@@ -30,6 +30,13 @@ type AuthState = {
   user: AuthUser | null;
 };
 
+type AuthSessionState = Pick<AuthState, "isAuthenticated" | "isLoading" | "user">;
+type GoogleSignInState = Pick<
+  AuthState,
+  "errorMessage" | "isSigningIn" | "signInWithGoogle"
+>;
+type SignOutState = Pick<AuthState, "isSigningOut" | "signOut" | "user">;
+
 const normalizeUser = (
   user: User | null | undefined,
   fallbackName: string,
@@ -59,16 +66,39 @@ const getAuthErrorMessage = (error: unknown, fallback: string) => {
 };
 
 export const useAuth = (): AuthState => {
-  const { authorize, clearSession, error, isLoading, user } = useAuth0();
+  const authSession = useAuthSession();
+  const googleSignIn = useGoogleSignIn();
+  const signOutState = useSignOut();
+
+  return {
+    ...authSession,
+    ...googleSignIn,
+    ...signOutState,
+    errorMessage: googleSignIn.errorMessage,
+    isSigningOut: signOutState.isSigningOut,
+    signOut: signOutState.signOut,
+    user: authSession.user,
+  };
+};
+
+export const useAuthSession = (): AuthSessionState => {
+  const { isLoading, user } = useAuth0();
   const { t } = useTranslation();
-  const actionError = useAtomValue(authActionErrorAtom);
-  const isSigningIn = useAtomValue(authIsSigningInAtom);
-  const isSigningOut = useAtomValue(authIsSigningOutAtom);
-  const setActionError = useSetAtom(authActionErrorAtom);
-  const setIsSigningIn = useSetAtom(authIsSigningInAtom);
-  const setIsSigningOut = useSetAtom(authIsSigningOutAtom);
-  const authConfig = getAuth0Config();
   const authUser = normalizeUser(user, t("auth.defaultUser"));
+
+  return {
+    isAuthenticated: Boolean(authUser),
+    isLoading,
+    user: authUser,
+  };
+};
+
+export const useGoogleSignIn = (): GoogleSignInState => {
+  const { authorize, error } = useAuth0();
+  const { t } = useTranslation();
+  const [actionError, setActionError] = useAtom(authActionErrorAtom);
+  const [isSigningIn, setIsSigningIn] = useAtom(authIsSigningInAtom);
+  const authConfig = getAuth0Config();
 
   const signInWithGoogle = async () => {
     setIsSigningIn(true);
@@ -92,6 +122,21 @@ export const useAuth = (): AuthState => {
     }
   };
 
+  return {
+    errorMessage: actionError ?? error?.message ?? null,
+    isSigningIn,
+    signInWithGoogle,
+  };
+};
+
+export const useSignOut = (): SignOutState => {
+  const { clearSession, user } = useAuth0();
+  const { t } = useTranslation();
+  const setActionError = useSetAtom(authActionErrorAtom);
+  const [isSigningOut, setIsSigningOut] = useAtom(authIsSigningOutAtom);
+  const authConfig = getAuth0Config();
+  const authUser = normalizeUser(user, t("auth.defaultUser"));
+
   const signOut = async () => {
     setIsSigningOut(true);
     setActionError(null);
@@ -106,12 +151,7 @@ export const useAuth = (): AuthState => {
   };
 
   return {
-    errorMessage: actionError ?? error?.message ?? null,
-    isAuthenticated: Boolean(authUser),
-    isLoading,
-    isSigningIn,
     isSigningOut,
-    signInWithGoogle,
     signOut,
     user: authUser,
   };

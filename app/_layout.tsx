@@ -8,7 +8,7 @@ import { useFonts as useExpoFonts } from "expo-font";
 import { useUnistyles } from "react-native-unistyles";
 import { AppProviders } from "@/providers/app-providers";
 import { Platform, View } from "react-native";
-import { useAuth } from "@/features/auth/auth-provider";
+import { useAuthSession } from "@/features/auth/auth-provider";
 import { LoadingState } from "@/lib/components/loading-state";
 import { useTranslation } from "react-i18next";
 
@@ -16,7 +16,7 @@ SplashScreen.preventAutoHideAsync().catch(() => undefined);
 SplashScreen.setOptions({ duration: 250, fade: true });
 
 const RootNavigator: React.FC = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuthSession();
   const { theme } = useUnistyles();
   const { t } = useTranslation();
   const baseNavigationTheme = theme.isDark ? DarkTheme : DefaultTheme;
